@@ -19,4 +19,9 @@ namespace FundooCommonLayer.ModelRequest
     [EmailAddress]
     public string Email { get; set; }
   }
+  public class ResetPassword
+  {
+    public long UserId { get; set; }
+    public string Password { get; set; }
+  }
 }

@@ -11,6 +11,8 @@ using FundooBusinessLayer.Interfaces;
 using FundooBusinessLayer.Services;
 using FundooCommonLayer.Model;
 using FundooCommonLayer.ModelRequest;
+using FundooCommonLayer.MSMQ;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
@@ -22,14 +24,14 @@ namespace FundooNotes.Controllers
   public class UserAccountController : ControllerBase
   {
     private readonly IUserBusiness _userBusiness;
-       private IConfiguration _config;
+    private IConfiguration _config;
 
     public UserAccountController(IUserBusiness userBusiness, IConfiguration config)
     {
       this._userBusiness = userBusiness;
       _config = config;
     }
- 
+
     [HttpPost]
     public IActionResult Registration([FromBody] UserDetails userDetails)
     {
@@ -38,7 +40,7 @@ namespace FundooNotes.Controllers
       {
         var sucess = true;
         var message = "Registration successful";
-        return Ok(new {sucess,message});
+        return Ok(new { sucess, message });
       }
       else
       {
@@ -52,12 +54,12 @@ namespace FundooNotes.Controllers
     public IActionResult Login(Login login)
     {
       ResponseModel data = _userBusiness.Login(login);
-      if (data!=null)
+      if (data != null)
       {
-        var token = GenerateJSONWebToken(data);
+        var token = GenerateJSONWebToken(data, "Login");
         var success = true;
         var message = "Login successful";
-        return Ok(new { success, message });
+        return Ok(new { success, message, data, token });
       }
       else
       {
@@ -66,21 +68,69 @@ namespace FundooNotes.Controllers
         return BadRequest(new { success, message });
       }
     }
-    private string GenerateJSONWebToken(ResponseModel responseModel)
+    [HttpPost]
+    [Route("Forget")]
+    public IActionResult ForgetPassword(ForgetPassword forgetPassword)
+    {
+      ResponseModel data = _userBusiness.ForgetPassword(forgetPassword);
+      if (data != null)
+      {
+        var token = GenerateJSONWebToken(data, "ForgetPassword");
+        var success = true;
+        var message = "Email Verified";
+        Send.SendMSMQ(token);
+        Receive.ReceiveMail(forgetPassword);
+        return Ok(new { success, message, token });
+      }
+      else
+      {
+        var success = false;
+        var message = "Email not matched";
+        return Ok(new { success, message });
+      }
+    }
+    [HttpPost]
+    [Authorize]
+    [Route("Reset")]
+    public IActionResult ResetPassword(ResetPassword resetPassword)
+    {
+      bool status;
+      string message;
+      var user = HttpContext.User;
+      if (user.HasClaim(c => c.Type == "Typetoken"))
+      {
+        if (user.Claims.FirstOrDefault(c => c.Type == "Typetoken").Value == "ForgetPassword")
+        {
+          resetPassword.UserId = Convert.ToInt32(user.Claims.FirstOrDefault(c => c.Type == "UserId").Value);
+          status = _userBusiness.ResetPassword(resetPassword);
+          if (status)
+          {
+            status = true;
+            message = "Your password has been successfully changed";
+            return Ok(new { status, message });
+          }
+        }
+      }
+      status = false;
+      message = "Invalid User";
+      return NotFound(new { status, message });
+    }
+    private string GenerateJSONWebToken(ResponseModel responseModel, string type)
     {
       var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
       var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
       var claims = new[] {
       new Claim("UserId",responseModel.UserId.ToString()),
-      new Claim("Email",responseModel.Email.ToString())
+      new Claim("Email",responseModel.Email.ToString()),
+      new Claim("Typetoken",type)
     };
       var token = new JwtSecurityToken(_config["Jwt:Issuer"],
         _config["Jwt:Issuer"],
-        null,
-        expires: DateTime.Now.AddMinutes(120),
+        claims,
+        expires: DateTime.Now.AddMinutes(5),
         signingCredentials: credentials);
 
       return new JwtSecurityTokenHandler().WriteToken(token);
-    }  
+    }
   }
 }

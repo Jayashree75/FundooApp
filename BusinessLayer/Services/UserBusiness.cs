@@ -2,14 +2,10 @@
 {
   using CommonLayer.Model;
   using FundooBusinessLayer.Interfaces;
-    using FundooCommonLayer.Model;
-    using FundooCommonLayer.ModelRequest;
+  using FundooCommonLayer.Model;
+  using FundooCommonLayer.ModelRequest;
   using FundooRepositoryLayer.Interfaces;
-    using System;
-  using System.Collections.Generic;
-  using System.Text;
-
-
+  using System;
   public class UserBusiness : IUserBusiness
   {
     private readonly IUserRepository _userRepository;
@@ -18,16 +14,28 @@
       _userRepository = userRepository;
     }
 
-    public ResponseModel Login(Login login)
+    public ResponseModel ForgetPassword(ForgetPassword forgetPassword)
     {
-    
-      if(string.IsNullOrWhiteSpace(login.Email)|| string.IsNullOrWhiteSpace(login.Password))
+      if (string.IsNullOrWhiteSpace(forgetPassword.Email))
       {
         return null;
       }
       else
       {
-        return _userRepository.Login(login); 
+        return _userRepository.ForgetPassword(forgetPassword);
+      }
+    }
+
+    public ResponseModel Login(Login login)
+    {
+
+      if (string.IsNullOrWhiteSpace(login.Email) || string.IsNullOrWhiteSpace(login.Password))
+      {
+        return null;
+      }
+      else
+      {
+        return _userRepository.Login(login);
       }
     }
 
@@ -42,6 +50,16 @@
         throw new Exception("User Details is Empty");
       }
     }
-
+    public bool ResetPassword(ResetPassword resetPassword)
+    {
+      if((resetPassword.UserId==0) || (resetPassword.Password==null))
+      {
+        return false;
+      }
+      else
+      {
+        return _userRepository.ResetPassword(resetPassword);
+      }
+    }
   }
 }
