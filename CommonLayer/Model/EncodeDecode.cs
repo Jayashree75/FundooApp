@@ -1,11 +1,25 @@
-﻿using System;
+﻿//-----------------------------------------------------------------------
+// <copyright file="EncodeDecode.cs" company="Bridgelabz" Author="Jayashree sawakare">
+// Company copyright tag.
+// </copyright>
+//-----------------------------------------------------------------------
+namespace FundooCommonLayer.Model
+{
+using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace FundooCommonLayer.Model
-{
+  /// <summary>
+  /// This the class for Encode password.
+  /// </summary>
   public class EncodeDecode
   {
+    /// <summary>
+    /// Method for Encodes the password.
+    /// </summary>
+    /// <param name="password">The password.</param>
+    /// <returns></returns>
+    /// <exception cref="Exception">Error in base64Encode" + ex.Message</exception>
     public static string EncodePassword(string password)
     {
       try
@@ -19,7 +33,12 @@ namespace FundooCommonLayer.Model
       {
         throw new Exception("Error in base64Encode" + ex.Message);
       }
-    } 
+    }
+    /// <summary>
+    /// Method for Decodes the password.
+    /// </summary>
+    /// <param name="encodedData">The encoded data.</param>
+    /// <returns></returns>
     public string DecodePassword(string encodedData)
     {
       System.Text.UTF8Encoding encoder = new System.Text.UTF8Encoding();

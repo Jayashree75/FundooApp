@@ -1,4 +1,9 @@
-﻿namespace CommonLayer.Model
+﻿//-----------------------------------------------------------------------
+// <copyright file="UserDetails.cs" company="Bridgelabz" Author="Jayashree sawakare">
+// Company copyright tag.
+// </copyright>
+//-----------------------------------------------------------------------
+namespace CommonLayer.Model
 {
   using System;
   using System.Collections.Generic;
@@ -6,6 +11,9 @@
   using System.ComponentModel.DataAnnotations.Schema;
   using System.Text;
 
+  /// <summary>
+  /// this is the class for userdetails.
+  /// </summary>
   [Table("UserDetails")]
   public class UserDetails
   {

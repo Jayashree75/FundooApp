@@ -1,4 +1,9 @@
-﻿namespace FundooRepositoryLayer.Services
+﻿//-----------------------------------------------------------------------
+// <copyright file="UserRepository.cs" company="Bridgelabz" Author="Jayashree sawakare">
+// Company copyright tag.
+// </copyright>
+//-----------------------------------------------------------------------
+namespace FundooRepositoryLayer.Services
 {
   using CommonLayer.Model;
   using FundooCommonLayer.Model;
@@ -10,83 +15,139 @@
   using System.Linq;
   using System.Text;
 
+  /// <summary>
+  /// This is the class of UserRepository.
+  /// </summary>
+  /// <seealso cref="FundooRepositoryLayer.Interfaces.IUserRepository" />
   public class UserRepository : IUserRepository
   {
     private readonly UserContext _userContext;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="UserRepository"/> class.
+    /// </summary>
+    /// <param name="userContext">The user context.</param>
     public UserRepository(UserContext userContext)
     {
       _userContext = userContext;
     }
 
+    /// <summary>
+    /// Method for Forget the password.
+    /// </summary>
+    /// <param name="forgetPassword">The forget password.</param>
+    /// <returns></returns>
     public ResponseModel ForgetPassword(ForgetPassword forgetPassword)
     {
-      var data = _userContext.Users.FirstOrDefault(user => user.Email == forgetPassword.Email);
-      if(data!=null)
+      try
       {
-        var userdata = new ResponseModel()
+        var data = _userContext.Users.FirstOrDefault(user => user.Email == forgetPassword.Email);
+        if (data != null)
         {
-          UserId = data.UserId,
-          FirstName = data.FirstName,
-          LastName = data.LastName,
-          Email = data.Email,
-          Type = data.Type,
-          IsActive = data.IsActive,
-          IsCreated = data.IsCreated,
-          IsModified = data.IsModified
-        };
-        return userdata;
+          var userdata = new ResponseModel()
+          {
+            UserId = data.UserId,
+            FirstName = data.FirstName,
+            LastName = data.LastName,
+            Email = data.Email,
+            Type = data.Type,
+            IsActive = data.IsActive,
+            IsCreated = data.IsCreated,
+            IsModified = data.IsModified
+          };
+          return userdata;
+        }
+        return null;
       }
-      return null;
-    }
-  
-    public ResponseModel Login(Login login)
-    {
-      login.Password = EncodeDecode.EncodePassword(login.Password);
-      var data = _userContext.Users.FirstOrDefault(user => (user.Email == login.Email) && (user.Password == login.Password));
-      if (data!=null)
+      catch (Exception e)
       {
-        var userdata = new ResponseModel()
-        {
-          UserId = data.UserId,
-          FirstName = data.FirstName,
-          LastName = data.LastName,
-          Email = data.Email,
-          Type = data.Type,
-          IsActive = data.IsActive,
-          IsCreated=data.IsCreated,
-          IsModified=data.IsModified
-        };
-        return userdata;
+        throw new Exception(e.Message);
       }
-      return null;
-    }
-    
-    public UserDetails Register(UserDetails userDetails)
-    {
-      userDetails.Password= EncodeDecode.EncodePassword(userDetails.Password);
-      userDetails.IsActive = true;
-      userDetails.IsCreated = DateTime.Now;
-      userDetails.IsModified = DateTime.Now;
-      _userContext.Users.Add(userDetails);
-      _userContext.SaveChanges();
-      return userDetails;
     }
 
+    /// <summary>
+    /// method for Logins the specified login.
+    /// </summary>
+    /// <param name="login">The login.</param>
+    /// <returns>return userdata if successful</returns>
+    public ResponseModel Login(Login login)
+    {
+      try
+      {
+        login.Password = EncodeDecode.EncodePassword(login.Password);
+        var data = _userContext.Users.FirstOrDefault(user => (user.Email == login.Email) && (user.Password == login.Password));
+        if (data != null)
+        {
+          var userdata = new ResponseModel()
+          {
+            UserId = data.UserId,
+            FirstName = data.FirstName,
+            LastName = data.LastName,
+            Email = data.Email,
+            Type = data.Type,
+            IsActive = data.IsActive,
+            IsCreated = data.IsCreated,
+            IsModified = data.IsModified
+          };
+          return userdata;
+        }
+        return null;
+      }
+      catch (Exception e)
+      {
+        throw new Exception(e.Message);
+      }
+    }
+
+    /// <summary>
+    /// method for Registers the specified user details.
+    /// </summary>
+    /// <param name="userDetails">The user details.</param>
+    /// <returns>returns userdetails</returns>
+    public UserDetails Register(UserDetails userDetails)
+    {
+      try
+      {
+        userDetails.Password = EncodeDecode.EncodePassword(userDetails.Password);
+        userDetails.IsActive = true;
+        userDetails.IsCreated = DateTime.Now;
+        userDetails.IsModified = DateTime.Now;
+        _userContext.Users.Add(userDetails);
+        _userContext.SaveChanges();
+        return userDetails;
+      }
+      catch (Exception e)
+      {
+        throw new Exception(e.Message);
+      }
+    }
+
+    /// <summary>
+    /// method for Resets the password.
+    /// </summary>
+    /// <param name="resetPassword">The reset password.</param>
+    /// <returns>it return true if password changed sucessfully</returns>
     bool IUserRepository.ResetPassword(ResetPassword resetPassword)
     {
-      UserDetails userDetails = _userContext.Users.FirstOrDefault(user => user.UserId == resetPassword.UserId);
-      if(userDetails!=null)
+      try
       {
-        resetPassword.Password = EncodeDecode.EncodePassword(resetPassword.Password);
-        userDetails.Password = resetPassword.Password;
-        userDetails.IsModified = DateTime.Now;
-        var user = _userContext.Users.Attach(userDetails);
-        user.State = Microsoft.EntityFrameworkCore.EntityState.Modified;
-        _userContext.SaveChanges();
-        return true;
+        UserDetails userDetails = _userContext.Users.FirstOrDefault(user => user.UserId == resetPassword.UserId);
+        if (userDetails != null)
+        {
+          resetPassword.Password = EncodeDecode.EncodePassword(resetPassword.Password);
+          userDetails.Password = resetPassword.Password;
+          userDetails.IsModified = DateTime.Now;
+          var user = _userContext.Users.Attach(userDetails);
+          user.State = Microsoft.EntityFrameworkCore.EntityState.Modified;
+          _userContext.SaveChanges();
+          return true;
+        }
+        return false;
       }
-      return false;
+      catch (Exception e)
+      {
+        throw new Exception(e.Message);
+      }
     }
   }
 }

@@ -1,9 +1,17 @@
-﻿using System;
+﻿//-----------------------------------------------------------------------
+// <copyright file="ResponseModel.cs" company="Bridgelabz" Author="Jayashree sawakare">
+// Company copyright tag.
+// </copyright>
+//-----------------------------------------------------------------------
+namespace FundooCommonLayer.Model
+{
+using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace FundooCommonLayer.Model
-{
+  /// <summary>
+  /// This is the class for responsemodel.
+  /// </summary>
   public class ResponseModel
   {
     public long UserId { get; set; }

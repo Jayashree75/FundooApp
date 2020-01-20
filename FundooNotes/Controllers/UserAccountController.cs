@@ -1,24 +1,33 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
-using System.Reflection.Metadata;
-using System.Security.Claims;
-using System.Text;
-using System.Threading.Tasks;
-using CommonLayer.Model;
-using FundooBusinessLayer.Interfaces;
-using FundooBusinessLayer.Services;
-using FundooCommonLayer.Model;
-using FundooCommonLayer.ModelRequest;
-using FundooCommonLayer.MSMQ;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
-using Microsoft.IdentityModel.Tokens;
-
+﻿//-----------------------------------------------------------------------
+// <copyright file="UserAccountController.cs" company="Bridgelabz" Author="Jayashree sawakare">
+// Company copyright tag.
+// </copyright>
+//-----------------------------------------------------------------------
 namespace FundooNotes.Controllers
 {
+  using System;
+  using System.Collections.Generic;
+  using System.IdentityModel.Tokens.Jwt;
+  using System.Linq;
+  using System.Reflection.Metadata;
+  using System.Security.Claims;
+  using System.Text;
+  using System.Threading.Tasks;
+  using CommonLayer.Model;
+  using FundooBusinessLayer.Interfaces;
+  using FundooBusinessLayer.Services;
+  using FundooCommonLayer.Model;
+  using FundooCommonLayer.ModelRequest;
+  using FundooCommonLayer.MSMQ;
+  using Microsoft.AspNetCore.Authorization;
+  using Microsoft.AspNetCore.Mvc;
+  using Microsoft.Extensions.Configuration;
+  using Microsoft.IdentityModel.Tokens;
+
+
+  /// <summary>
+  /// This is the controller class.
+  /// </summary>
   [Route("api/[controller]")]
   [ApiController]
   public class UserAccountController : ControllerBase
@@ -28,11 +37,17 @@ namespace FundooNotes.Controllers
 
     public UserAccountController(IUserBusiness userBusiness, IConfiguration config)
     {
-      this._userBusiness = userBusiness;
+      _userBusiness = userBusiness;
       _config = config;
     }
 
+    /// <summary>
+    /// This is the method for Post Registration.
+    /// </summary>
+    /// <param name="userDetails"></param>
+    /// <returns></returns>
     [HttpPost]
+    [Route("Registration")]
     public IActionResult Registration([FromBody] UserDetails userDetails)
     {
       var result = _userBusiness.Register(userDetails);
@@ -49,6 +64,12 @@ namespace FundooNotes.Controllers
         return BadRequest(new { sucess, message });
       }
     }
+
+    /// <summary>
+    /// This is the method for Post the loginDetail.
+    /// </summary>
+    /// <param name="login"></param>
+    /// <returns></returns>
     [HttpPost]
     [Route("Login")]
     public IActionResult Login(Login login)
@@ -68,6 +89,12 @@ namespace FundooNotes.Controllers
         return BadRequest(new { success, message });
       }
     }
+
+    /// <summary>
+    /// This is the httppost method for forgetPassword.
+    /// </summary>
+    /// <param name="forgetPassword"></param>
+    /// <returns></returns>
     [HttpPost]
     [Route("Forget")]
     public IActionResult ForgetPassword(ForgetPassword forgetPassword)
@@ -89,6 +116,12 @@ namespace FundooNotes.Controllers
         return Ok(new { success, message });
       }
     }
+
+    /// <summary>
+    /// This is the method for ResetPassword.
+    /// </summary>
+    /// <param name="resetPassword"></param>
+    /// <returns></returns>
     [HttpPost]
     [Authorize]
     [Route("Reset")]
@@ -115,6 +148,13 @@ namespace FundooNotes.Controllers
       message = "Invalid User";
       return NotFound(new { status, message });
     }
+
+    /// <summary>
+    /// This is the method for GenerateToken.
+    /// </summary>
+    /// <param name="responseModel"></param>
+    /// <param name="type"></param>
+    /// <returns></returns>
     private string GenerateJSONWebToken(ResponseModel responseModel, string type)
     {
       var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
@@ -129,7 +169,6 @@ namespace FundooNotes.Controllers
         claims,
         expires: DateTime.Now.AddMinutes(5),
         signingCredentials: credentials);
-
       return new JwtSecurityTokenHandler().WriteToken(token);
     }
   }
