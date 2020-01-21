@@ -49,6 +49,39 @@ namespace FundooRepositoryLayer.Migrations
 
                     b.ToTable("UserDetails");
                 });
+
+            modelBuilder.Entity("FundooCommonLayer.Model.NotesDB", b =>
+                {
+                    b.Property<int>("NoteID")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Color");
+
+                    b.Property<string>("Description");
+
+                    b.Property<string>("Image");
+
+                    b.Property<bool>("IsArchive");
+
+                    b.Property<DateTime>("IsCreated");
+
+                    b.Property<DateTime>("IsModified");
+
+                    b.Property<bool>("IsPin");
+
+                    b.Property<bool>("IsTrash");
+
+                    b.Property<DateTime>("Reminder");
+
+                    b.Property<string>("Title");
+
+                    b.Property<long>("UserId");
+
+                    b.HasKey("NoteID");
+
+                    b.ToTable("Notes");
+                });
 #pragma warning restore 612, 618
         }
     }

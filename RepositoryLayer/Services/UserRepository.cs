@@ -24,7 +24,7 @@ namespace FundooRepositoryLayer.Services
     private readonly UserContext _userContext;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="UserRepository"/> class.
+    /// Initializes a new instance of the <see cref="NotesRepository"/> class.
     /// </summary>
     /// <param name="userContext">The user context.</param>
     public UserRepository(UserContext userContext)

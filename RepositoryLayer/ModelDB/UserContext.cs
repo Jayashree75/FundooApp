@@ -6,7 +6,8 @@
 namespace FundooRepositoryLayer.ModelDB
 {
 using CommonLayer.Model;
-using Microsoft.EntityFrameworkCore;
+    using FundooCommonLayer.Model;
+    using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -35,6 +36,7 @@ using System.Text;
     /// The users.
     /// </value>
     public DbSet<UserDetails> Users { get; set; }
+    public DbSet<NotesDB> Notes { get; set; }
     /// <summary>
     /// Override this method to further configure the model that was discovered by convention from the entity types
     /// exposed in <see cref="T:Microsoft.EntityFrameworkCore.DbSet`1" /> properties on your derived context. The resulting model may be cached
@@ -52,7 +54,6 @@ using System.Text;
       modelBuilder.Entity<UserDetails>()
         .HasIndex(user => user.Email)
         .IsUnique();
-
     }
   }
 }

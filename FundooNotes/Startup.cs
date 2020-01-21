@@ -66,6 +66,8 @@ namespace FundooNotes
       services.AddDbContext<UserContext>(opts => opts.UseSqlServer(Configuration["ConnectionString:UserDB"]));
       services.AddScoped<IUserBusiness, UserBusiness>();
       services.AddScoped<IUserRepository, UserRepository>();
+      services.AddScoped<INotesBusiness, NotesBusiness>();
+      services.AddScoped<INotesRepository, NotesRepository>();
       services.AddSwaggerGen(c =>
       {
         c.SwaggerDoc("v1", new Info { Title = "My API", Version = "v1" });

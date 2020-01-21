@@ -50,18 +50,25 @@ namespace FundooNotes.Controllers
     [Route("Registration")]
     public IActionResult Registration([FromBody] UserDetails userDetails)
     {
-      var result = _userBusiness.Register(userDetails);
-      if (result != null)
+      try
       {
-        var sucess = true;
-        var message = "Registration successful";
-        return Ok(new { sucess, message });
+        var result = _userBusiness.Register(userDetails);
+        if (result != null)
+        {
+          var sucess = true;
+          var message = "Registration successful";
+          return Ok(new { sucess, message });
+        }
+        else
+        {
+          var sucess = true;
+          var message = "Registration failed";
+          return BadRequest(new { sucess, message });
+        }
       }
-      else
+      catch (Exception e)
       {
-        var sucess = true;
-        var message = "Registration failed";
-        return BadRequest(new { sucess, message });
+        throw new Exception(e.Message);
       }
     }
 
@@ -74,19 +81,26 @@ namespace FundooNotes.Controllers
     [Route("Login")]
     public IActionResult Login(Login login)
     {
-      ResponseModel data = _userBusiness.Login(login);
-      if (data != null)
+      try
       {
-        var token = GenerateJSONWebToken(data, "Login");
-        var success = true;
-        var message = "Login successful";
-        return Ok(new { success, message, data, token });
+        ResponseModel data = _userBusiness.Login(login);
+        if (data != null)
+        {
+          var token = GenerateJSONWebToken(data, "Login");
+          var success = true;
+          var message = "Login successful";
+          return Ok(new { success, message, data, token });
+        }
+        else
+        {
+          var success = false;
+          var message = "Login Failed";
+          return BadRequest(new { success, message });
+        }
       }
-      else
+      catch (Exception e)
       {
-        var success = false;
-        var message = "Login Failed";
-        return BadRequest(new { success, message });
+        throw new Exception(e.Message);
       }
     }
 
@@ -127,26 +141,33 @@ namespace FundooNotes.Controllers
     [Route("Reset")]
     public IActionResult ResetPassword(ResetPassword resetPassword)
     {
-      bool status;
-      string message;
-      var user = HttpContext.User;
-      if (user.HasClaim(c => c.Type == "Typetoken"))
+      try
       {
-        if (user.Claims.FirstOrDefault(c => c.Type == "Typetoken").Value == "ForgetPassword")
+        bool status;
+        string message;
+        var user = HttpContext.User;
+        if (user.HasClaim(c => c.Type == "Typetoken"))
         {
-          resetPassword.UserId = Convert.ToInt32(user.Claims.FirstOrDefault(c => c.Type == "UserId").Value);
-          status = _userBusiness.ResetPassword(resetPassword);
-          if (status)
+          if (user.Claims.FirstOrDefault(c => c.Type == "Typetoken").Value == "ForgetPassword")
           {
-            status = true;
-            message = "Your password has been successfully changed";
-            return Ok(new { status, message });
+            resetPassword.UserId = Convert.ToInt32(user.Claims.FirstOrDefault(c => c.Type == "UserId").Value);
+            status = _userBusiness.ResetPassword(resetPassword);
+            if (status)
+            {
+              status = true;
+              message = "Your password has been successfully changed";
+              return Ok(new { status, message });
+            }
           }
         }
+        status = false;
+        message = "Invalid User";
+        return NotFound(new { status, message });
       }
-      status = false;
-      message = "Invalid User";
-      return NotFound(new { status, message });
+      catch (Exception e)
+      {
+        throw new Exception(e.Message);
+      }
     }
 
     /// <summary>
@@ -157,19 +178,26 @@ namespace FundooNotes.Controllers
     /// <returns></returns>
     private string GenerateJSONWebToken(ResponseModel responseModel, string type)
     {
-      var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
-      var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
-      var claims = new[] {
-      new Claim("UserId",responseModel.UserId.ToString()),
-      new Claim("Email",responseModel.Email.ToString()),
-      new Claim("Typetoken",type)
-    };
-      var token = new JwtSecurityToken(_config["Jwt:Issuer"],
-        _config["Jwt:Issuer"],
-        claims,
-        expires: DateTime.Now.AddMinutes(5),
-        signingCredentials: credentials);
-      return new JwtSecurityTokenHandler().WriteToken(token);
+      try
+      {
+        var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
+        var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
+        var claims = new[] {
+        new Claim("UserId",responseModel.UserId.ToString()),
+        new Claim("Email",responseModel.Email.ToString()),
+        new Claim("Typetoken",type)
+        };
+        var token = new JwtSecurityToken(_config["Jwt:Issuer"],
+          _config["Jwt:Issuer"],
+          claims,
+          expires: DateTime.Now.AddMinutes(5),
+          signingCredentials: credentials);
+        return new JwtSecurityTokenHandler().WriteToken(token);
+      }
+      catch (Exception e)
+      {
+        throw new Exception(e.Message);
+      }
     }
   }
 }

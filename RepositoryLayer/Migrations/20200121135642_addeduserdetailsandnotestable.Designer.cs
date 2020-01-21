@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FundooRepositoryLayer.Migrations
 {
     [DbContext(typeof(UserContext))]
-    [Migration("20200116041817_FundooRepositoryLayer.ModelDB.UserContext")]
-    partial class FundooRepositoryLayerModelDBUserContext
+    [Migration("20200121135642_addeduserdetailsandnotestable")]
+    partial class addeduserdetailsandnotestable
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -23,7 +23,7 @@ namespace FundooRepositoryLayer.Migrations
 
             modelBuilder.Entity("CommonLayer.Model.UserDetails", b =>
                 {
-                    b.Property<long>("EmployeeId")
+                    b.Property<long>("UserId")
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
@@ -43,9 +43,46 @@ namespace FundooRepositoryLayer.Migrations
 
                     b.Property<string>("Type");
 
-                    b.HasKey("EmployeeId");
+                    b.HasKey("UserId");
+
+                    b.HasIndex("Email")
+                        .IsUnique()
+                        .HasFilter("[Email] IS NOT NULL");
 
                     b.ToTable("UserDetails");
+                });
+
+            modelBuilder.Entity("FundooCommonLayer.Model.NotesDB", b =>
+                {
+                    b.Property<int>("NoteID")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Color");
+
+                    b.Property<string>("Description");
+
+                    b.Property<string>("Image");
+
+                    b.Property<bool>("IsArchive");
+
+                    b.Property<DateTime>("IsCreated");
+
+                    b.Property<DateTime>("IsModified");
+
+                    b.Property<bool>("IsPin");
+
+                    b.Property<bool>("IsTrash");
+
+                    b.Property<DateTime>("Reminder");
+
+                    b.Property<string>("Title");
+
+                    b.Property<long>("UserId");
+
+                    b.HasKey("NoteID");
+
+                    b.ToTable("Notes");
                 });
 #pragma warning restore 612, 618
         }

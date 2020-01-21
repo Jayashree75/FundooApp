@@ -5,7 +5,8 @@
 //-----------------------------------------------------------------------
 namespace CommonLayer.Model
 {
-  using System;
+    using FundooCommonLayer.Model;
+    using System;
   using System.Collections.Generic;
   using System.ComponentModel.DataAnnotations;
   using System.ComponentModel.DataAnnotations.Schema;
@@ -31,6 +32,5 @@ namespace CommonLayer.Model
     public bool IsActive { get; set; }
     public DateTime IsCreated { get; set; }
     public DateTime IsModified { get; set; }
-
   }
 }
