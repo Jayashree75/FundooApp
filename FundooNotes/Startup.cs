@@ -27,12 +27,12 @@ namespace FundooNotes
   using Microsoft.Extensions.Options;
   using Microsoft.IdentityModel.Tokens;
   using Swashbuckle.AspNetCore.Swagger;
-    using Swashbuckle.AspNetCore.SwaggerGen;
+  using Swashbuckle.AspNetCore.SwaggerGen;
 
-    /// <summary>
-    /// This is the startup class.
-    /// </summary>
-    public class Startup
+  /// <summary>
+  /// This is the startup class.
+  /// </summary>
+  public class Startup
   {
     public Startup(IConfiguration configuration)
     {
@@ -68,6 +68,8 @@ namespace FundooNotes
       services.AddScoped<IUserRepository, UserRepository>();
       services.AddScoped<INotesBusiness, NotesBusiness>();
       services.AddScoped<INotesRepository, NotesRepository>();
+      services.AddScoped<ILabelBusiness, LabelBusiness>();
+      services.AddScoped<ILabelRepository, LabelRepository>();
       services.AddSwaggerGen(c =>
       {
         c.SwaggerDoc("v1", new Info { Title = "My API", Version = "v1" });
@@ -111,7 +113,7 @@ namespace FundooNotes
 
     }
   }
-  public class SecurityRequirementDocumentFilter:IDocumentFilter
+  public class SecurityRequirementDocumentFilter : IDocumentFilter
   {
     public void Apply(SwaggerDocument swaggerDoc, DocumentFilterContext context)
     {

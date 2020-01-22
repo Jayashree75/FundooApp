@@ -13,5 +13,6 @@
     NotesDB UpdateNotes(NotesDB notesDB);
     bool DeleteNotes(int noteid);
     NotesDB GetNotesByNoteId(int noteid,int userid);
+    bool Trash(int userid, int noteid);
   }
 }

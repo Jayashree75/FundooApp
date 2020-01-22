@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FundooRepositoryLayer.Migrations
 {
     [DbContext(typeof(UserContext))]
-    [Migration("20200121135642_addeduserdetailsandnotestable")]
-    partial class addeduserdetailsandnotestable
+    [Migration("20200122072603_Labeladded")]
+    partial class Labeladded
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -49,7 +49,28 @@ namespace FundooRepositoryLayer.Migrations
                         .IsUnique()
                         .HasFilter("[Email] IS NOT NULL");
 
-                    b.ToTable("UserDetails");
+                    b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("FundooCommonLayer.Model.LabelModel", b =>
+                {
+                    b.Property<int>("LabelID")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<DateTime>("IsCreated");
+
+                    b.Property<DateTime>("IsModified");
+
+                    b.Property<string>("LabelName");
+
+                    b.Property<int>("NoteID");
+
+                    b.Property<long>("UserId");
+
+                    b.HasKey("LabelID");
+
+                    b.ToTable("label");
                 });
 
             modelBuilder.Entity("FundooCommonLayer.Model.NotesDB", b =>

@@ -4,14 +4,16 @@ using FundooRepositoryLayer.ModelDB;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace FundooRepositoryLayer.Migrations
 {
     [DbContext(typeof(UserContext))]
-    partial class UserContextModelSnapshot : ModelSnapshot
+    [Migration("20200122050431_updatetables")]
+    partial class updatetables
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -48,27 +50,6 @@ namespace FundooRepositoryLayer.Migrations
                         .HasFilter("[Email] IS NOT NULL");
 
                     b.ToTable("Users");
-                });
-
-            modelBuilder.Entity("FundooCommonLayer.Model.LabelModel", b =>
-                {
-                    b.Property<int>("LabelID")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<DateTime>("IsCreated");
-
-                    b.Property<DateTime>("IsModified");
-
-                    b.Property<string>("LabelName");
-
-                    b.Property<int>("NoteID");
-
-                    b.Property<long>("UserId");
-
-                    b.HasKey("LabelID");
-
-                    b.ToTable("label");
                 });
 
             modelBuilder.Entity("FundooCommonLayer.Model.NotesDB", b =>

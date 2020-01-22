@@ -6,16 +6,12 @@
 namespace FundooNotes.Controllers
 {
   using System;
-  using System.Collections.Generic;
   using System.IdentityModel.Tokens.Jwt;
   using System.Linq;
-  using System.Reflection.Metadata;
   using System.Security.Claims;
   using System.Text;
-  using System.Threading.Tasks;
   using CommonLayer.Model;
   using FundooBusinessLayer.Interfaces;
-  using FundooBusinessLayer.Services;
   using FundooCommonLayer.Model;
   using FundooCommonLayer.ModelRequest;
   using FundooCommonLayer.MSMQ;
@@ -190,7 +186,7 @@ namespace FundooNotes.Controllers
         var token = new JwtSecurityToken(_config["Jwt:Issuer"],
           _config["Jwt:Issuer"],
           claims,
-          expires: DateTime.Now.AddMinutes(5),
+          expires: DateTime.Now.AddMinutes(30),
           signingCredentials: credentials);
         return new JwtSecurityTokenHandler().WriteToken(token);
       }

@@ -52,7 +52,6 @@ namespace FundooNotes.Controllers
       return BadRequest("used invalid token");
     }
     [HttpGet]
-    [Route("GetAllNotes")]
     public IActionResult GetNotes()
     {
       List<NotesDB> notesDBs = new List<NotesDB>();
@@ -111,7 +110,7 @@ namespace FundooNotes.Controllers
       return BadRequest("used invalid token");
     }
     [HttpDelete]
-    [Route("DeleteNote")]
+    [Route("{id}")]
     public IActionResult DeleteNotes(int noteid)
     {
       bool status;
@@ -139,8 +138,37 @@ namespace FundooNotes.Controllers
       }
       return BadRequest("used invalid token");
     }
+    [HttpPost]
+    [Route("Trash")]
+    public IActionResult TrashNotes(int userid,int noteid)
+    {
+      bool status;
+      string message;
+      var user = HttpContext.User;
+      if (user.HasClaim(c => c.Type == "Typetoken"))
+      {
+        if (user.Claims.FirstOrDefault(c => c.Type == "Typetoken").Value == "Login")
+        {
+          int UserId = Convert.ToInt32(user.Claims.FirstOrDefault(c => c.Type == "UserId").Value);
+          bool result = _notesBusiness.Trash(UserId, noteid);
+          if (result)
+          {
+            status = true;
+            message = "Note trashed";
+            return Ok(new { status, message });
+          }
+          else
+          {
+            status = false;
+            message = "Note trash failed";
+            return NotFound(new { status, message });
+          }
+        }
+      }
+      return BadRequest("used invalid token");
+    }
     [HttpGet]
-    [Route("GetNotesByNotesId/{id}")]
+    [Route("{id}")]
     public IActionResult GetNotesByNotesId(int noteid)
     {
       bool status;

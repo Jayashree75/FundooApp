@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace FundooRepositoryLayer.Migrations
 {
-    public partial class addeduserdetailsandnotestable : Migration
+    public partial class updatetables : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -32,7 +32,7 @@ namespace FundooRepositoryLayer.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "UserDetails",
+                name: "Users",
                 columns: table => new
                 {
                     UserId = table.Column<long>(nullable: false)
@@ -48,12 +48,12 @@ namespace FundooRepositoryLayer.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_UserDetails", x => x.UserId);
+                    table.PrimaryKey("PK_Users", x => x.UserId);
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserDetails_Email",
-                table: "UserDetails",
+                name: "IX_Users_Email",
+                table: "Users",
                 column: "Email",
                 unique: true,
                 filter: "[Email] IS NOT NULL");
@@ -65,7 +65,7 @@ namespace FundooRepositoryLayer.Migrations
                 name: "Notes");
 
             migrationBuilder.DropTable(
-                name: "UserDetails");
+                name: "Users");
         }
     }
 }

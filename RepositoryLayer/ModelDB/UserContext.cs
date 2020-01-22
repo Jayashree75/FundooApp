@@ -5,12 +5,12 @@
 //-----------------------------------------------------------------------
 namespace FundooRepositoryLayer.ModelDB
 {
-using CommonLayer.Model;
-    using FundooCommonLayer.Model;
-    using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Text;
+  using CommonLayer.Model;
+  using FundooCommonLayer.Model;
+  using Microsoft.EntityFrameworkCore;
+  using System;
+  using System.Collections.Generic;
+  using System.Text;
 
   /// <summary>
   /// This is the class for usercontext which implement DbContext.
@@ -37,6 +37,7 @@ using System.Text;
     /// </value>
     public DbSet<UserDetails> Users { get; set; }
     public DbSet<NotesDB> Notes { get; set; }
+    public DbSet<LabelModel> label { get; set; }
     /// <summary>
     /// Override this method to further configure the model that was discovered by convention from the entity types
     /// exposed in <see cref="T:Microsoft.EntityFrameworkCore.DbSet`1" /> properties on your derived context. The resulting model may be cached

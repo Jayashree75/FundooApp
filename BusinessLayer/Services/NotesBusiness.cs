@@ -62,6 +62,18 @@
       }
     }
 
+    public bool Trash(int userid, int noteid)
+    {
+      if(userid!=0 && noteid!=0)
+      {
+        return _notesRepository.Trash(userid, noteid);
+      }
+      else
+      {
+        return false;
+      }
+    }
+
     public NotesDB UpdateNotes(NotesDB notesDB)
     {
       if(notesDB!=null)

@@ -5,17 +5,13 @@
 //-----------------------------------------------------------------------
 namespace CommonLayer.Model
 {
-    using FundooCommonLayer.Model;
-    using System;
-  using System.Collections.Generic;
+  using System;
   using System.ComponentModel.DataAnnotations;
   using System.ComponentModel.DataAnnotations.Schema;
-  using System.Text;
 
   /// <summary>
   /// this is the class for userdetails.
   /// </summary>
-  [Table("UserDetails")]
   public class UserDetails
   {
     [Key]

@@ -5,8 +5,7 @@
   using FundooRepositoryLayer.ModelDB;
   using System;
   using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
+  using System.Linq;
 
 
   public class NotesRepository : INotesRepository
@@ -28,8 +27,9 @@
     public bool DeleteNotes(int noteid)
     {
       NotesDB notes = _userContext.Notes.FirstOrDefault(c => c.NoteID == noteid);
-      if(notes!=null)
+      if (notes != null)
       {
+
         _userContext.Notes.Remove(notes);
         this._userContext.SaveChanges();
         return true;
@@ -42,8 +42,8 @@
 
     public List<NotesDB> GetNotes(long userid)
     {
-     List<NotesDB> notesDBs= _userContext.Notes.Where(a => a.UserId == userid ).ToList();
-      if(notesDBs!=null)
+      List<NotesDB> notesDBs = _userContext.Notes.Where(a => a.UserId == userid).ToList();
+      if (notesDBs != null)
       {
         return notesDBs;
       }
@@ -51,12 +51,12 @@
       {
         return null;
       }
-     
+
     }
 
-    public NotesDB GetNotesByNoteId(int noteid,int userid)
+    public NotesDB GetNotesByNoteId(int noteid, int userid)
     {
-      NotesDB notes = _userContext.Notes.FirstOrDefault(c => (c.NoteID == noteid) && (c.UserId==userid));
+      NotesDB notes = _userContext.Notes.FirstOrDefault(c => (c.NoteID == noteid) && (c.UserId == userid));
       if (notes != null)
       {
         return notes;
@@ -68,10 +68,36 @@
 
     }
 
+    public bool Trash(int userid,int noteid)
+    {
+      bool flag = false;
+      NotesDB notes = _userContext.Notes.FirstOrDefault(c =>(c.UserId == userid)&&(c.NoteID==noteid));
+      if (notes!=null)
+      {
+        if(notes.IsTrash==false)
+        {
+          notes.IsTrash = true;
+          var note = this._userContext.Notes.Attach(notes);
+          note.State = Microsoft.EntityFrameworkCore.EntityState.Modified;
+          this._userContext.SaveChanges();
+           flag = true;
+        }
+        else
+        {
+          notes.IsTrash = false;
+          var note = this._userContext.Notes.Attach(notes);
+          note.State = Microsoft.EntityFrameworkCore.EntityState.Modified;
+          this._userContext.SaveChanges();
+          flag = false;
+        }
+      }
+      return flag;
+    }
+
     public NotesDB UpdateNotes(NotesDB notesDB)
     {
       NotesDB notesDB1 = _userContext.Notes.FirstOrDefault(c => (c.UserId == notesDB.UserId) && (c.NoteID == notesDB.NoteID));
-      if(notesDB1!=null)
+      if (notesDB1 != null)
       {
         notesDB1.Title = notesDB.Title;
         notesDB1.Description = notesDB.Description;
