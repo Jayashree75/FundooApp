@@ -13,10 +13,9 @@ using System;
   /// </summary>
   public class Send
   {
-    public static void SendMSMQ(string token)
+    public static void SendMSMQ(string token,string email)
     {
       MessageQueue messageQueue = null;
-      string description = "This is a test queue.";
       string messge = token;
       string path = @".\Private$\MyQueue";
       try
@@ -24,17 +23,18 @@ using System;
         if (MessageQueue.Exists(path))
         {
           messageQueue = new MessageQueue(path);
-          messageQueue.Label = description;
+          
         }
         else
         {
           MessageQueue.Create(path);
           messageQueue = new MessageQueue(path);
-          messageQueue.Label = description;
+        
         }
+        messageQueue.Label = email;
         Message message1 = new Message(messge);
         message1.Formatter = new BinaryMessageFormatter();
-        messageQueue.Send(message1);
+        messageQueue.Send(message1, email);
       }
       catch (Exception e)
       {

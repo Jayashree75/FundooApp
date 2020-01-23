@@ -17,7 +17,7 @@ namespace FundooBusinessLayer.Interfaces
   /// </summary>
   public interface IUserBusiness
   {
-    UserDetails Register(UserDetails userDetails);
+    UserDetails Register(Registratin registratin);
     ResponseModel Login(Login login);
     ResponseModel ForgetPassword(ForgetPassword forgetPassword);
     bool ResetPassword(ResetPassword resetPassword);

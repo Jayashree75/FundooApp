@@ -44,11 +44,11 @@ namespace FundooNotes.Controllers
     /// <returns></returns>
     [HttpPost]
     [Route("Registration")]
-    public IActionResult Registration([FromBody] UserDetails userDetails)
+    public IActionResult Registration([FromBody] Registratin registratin)
     {
       try
       {
-        var result = _userBusiness.Register(userDetails);
+        var result = _userBusiness.Register(registratin);
         if (result != null)
         {
           var sucess = true;
@@ -90,7 +90,7 @@ namespace FundooNotes.Controllers
         else
         {
           var success = false;
-          var message = "Login Failed";
+          var message = "Email is not registered";
           return BadRequest(new { success, message });
         }
       }
@@ -115,8 +115,7 @@ namespace FundooNotes.Controllers
         var token = GenerateJSONWebToken(data, "ForgetPassword");
         var success = true;
         var message = "Email Verified";
-        Send.SendMSMQ(token);
-        Receive.ReceiveMail(forgetPassword);
+        Send.SendMSMQ(token,forgetPassword.Email);
         return Ok(new { success, message, token });
       }
       else

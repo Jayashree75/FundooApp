@@ -37,7 +37,15 @@ using System.Text;
   /// </summary>
   public class ResetPassword
   {
-    public long UserId { get; set; }
+    public int UserId { get; set; }
     public string Password { get; set; }
+  }
+  public class Registratin
+  {
+    public string FirstName { get; set; }
+    public string LastName { get; set; }
+    public string Email { get; set; }
+    public string Password { get; set; }
+    public string Type { get; set; }
   }
 }

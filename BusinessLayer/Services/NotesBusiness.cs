@@ -2,7 +2,8 @@
 {
   using FundooBusinessLayer.Interfaces;
   using FundooCommonLayer.Model;
-  using FundooRepositoryLayer.Interfaces;
+    using FundooCommonLayer.ModelRequest;
+    using FundooRepositoryLayer.Interfaces;
   using System;
   using System.Collections.Generic;
   using System.Text;
@@ -14,15 +15,27 @@
     {
       _notesRepository = notesRepository;
     }
-    public NotesDB AddNotes(NotesDB notesDB)
+    public NotesDB AddNotes(RequestedNotes requestedNotes,int userid)
     {
-      if (notesDB != null)
+      if (requestedNotes != null)
       {
-        return _notesRepository.AddNotes(notesDB);
+        return _notesRepository.AddNotes(requestedNotes,userid);
       }
       else
       {
         throw new Exception("Notes Detail is Empty");
+      }
+    }
+
+    public bool Archive(int userid, int noteid)
+    {
+      if(userid!=0 && noteid!=0)
+      {
+        return _notesRepository.Archive(userid, noteid);
+      }
+      else
+      {
+        return false;
       }
     }
 
@@ -38,7 +51,43 @@
       }
     }
 
-    public List<NotesDB> GetNotes(long userid)
+    public List<NotesDB> GetAllArchive(int userid)
+    {
+      if(userid!=0)
+      {
+        return _notesRepository.GetAllArchive(userid);
+      }
+      else
+      {
+        return null;
+      }
+    }
+
+    public List<NotesDB> GetAllPinned(int userid)
+    {
+      if (userid != 0)
+      {
+        return _notesRepository.GetAllPinned(userid);
+      }
+      else
+      {
+        return null;
+      }
+    }
+
+    public List<NotesDB> GetAllTrashed(int userid)
+    {
+      if (userid != 0)
+      {
+        return _notesRepository.GetAllTrashed(userid);
+      }
+      else
+      {
+        return null;
+      }
+    }
+
+    public List<NotesDB> GetNotes(int userid)
     {
       if(userid!=0)
       {
@@ -59,6 +108,18 @@
       else
       {
         return null;
+      }
+    }
+
+    public bool Pinned(int userid, int noteid)
+    {
+     if(userid!=0 && noteid!=0)
+      {
+        return _notesRepository.Pinned(userid, noteid);
+      }
+     else
+      {
+        return false;
       }
     }
 

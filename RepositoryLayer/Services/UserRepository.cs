@@ -104,17 +104,25 @@ namespace FundooRepositoryLayer.Services
     /// </summary>
     /// <param name="userDetails">The user details.</param>
     /// <returns>returns userdetails</returns>
-    public UserDetails Register(UserDetails userDetails)
+    public UserDetails Register(Registratin registratin)
     {
       try
       {
-        userDetails.Password = EncodeDecode.EncodePassword(userDetails.Password);
-        userDetails.IsActive = true;
-        userDetails.IsCreated = DateTime.Now;
-        userDetails.IsModified = DateTime.Now;
-        _userContext.Users.Add(userDetails);
+        registratin.Password = EncodeDecode.EncodePassword(registratin.Password);
+        var model = new UserDetails()
+        {
+          FirstName = registratin.FirstName,
+          LastName = registratin.LastName,
+          Email = registratin.Email,
+          Password = registratin.Password,
+          Type = registratin.Type,
+          IsActive = true,
+          IsCreated=DateTime.Now,
+          IsModified=DateTime.Now
+        };
+        _userContext.Users.Add(model);
         _userContext.SaveChanges();
-        return userDetails;
+        return model;
       }
       catch (Exception e)
       {
@@ -127,7 +135,7 @@ namespace FundooRepositoryLayer.Services
     /// </summary>
     /// <param name="resetPassword">The reset password.</param>
     /// <returns>it return true if password changed sucessfully</returns>
-    bool IUserRepository.ResetPassword(ResetPassword resetPassword)
+  public bool ResetPassword(ResetPassword resetPassword)
     {
       try
       {

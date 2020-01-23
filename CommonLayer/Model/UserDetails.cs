@@ -16,7 +16,7 @@ namespace CommonLayer.Model
   {
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-    public long UserId { get; set; }
+    public int UserId { get; set; }
     [RegularExpression("^[a-zA-Z][a-zA-Z\\s]+$")]
     public string FirstName { get; set; }
     [RegularExpression("^[a-zA-Z][a-zA-Z\\s]+$")]

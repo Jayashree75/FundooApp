@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FundooRepositoryLayer.Migrations
 {
     [DbContext(typeof(UserContext))]
-    [Migration("20200122072603_Labeladded")]
-    partial class Labeladded
+    [Migration("20200123052035_Alltables")]
+    partial class Alltables
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -23,7 +23,7 @@ namespace FundooRepositoryLayer.Migrations
 
             modelBuilder.Entity("CommonLayer.Model.UserDetails", b =>
                 {
-                    b.Property<long>("UserId")
+                    b.Property<int>("UserId")
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
@@ -66,7 +66,7 @@ namespace FundooRepositoryLayer.Migrations
 
                     b.Property<int>("NoteID");
 
-                    b.Property<long>("UserId");
+                    b.Property<int>("UserId");
 
                     b.HasKey("LabelID");
 
@@ -99,7 +99,7 @@ namespace FundooRepositoryLayer.Migrations
 
                     b.Property<string>("Title");
 
-                    b.Property<long>("UserId");
+                    b.Property<int>("UserId");
 
                     b.HasKey("NoteID");
 

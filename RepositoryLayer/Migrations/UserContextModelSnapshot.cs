@@ -21,7 +21,7 @@ namespace FundooRepositoryLayer.Migrations
 
             modelBuilder.Entity("CommonLayer.Model.UserDetails", b =>
                 {
-                    b.Property<long>("UserId")
+                    b.Property<int>("UserId")
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
@@ -64,7 +64,7 @@ namespace FundooRepositoryLayer.Migrations
 
                     b.Property<int>("NoteID");
 
-                    b.Property<long>("UserId");
+                    b.Property<int>("UserId");
 
                     b.HasKey("LabelID");
 
@@ -97,7 +97,7 @@ namespace FundooRepositoryLayer.Migrations
 
                     b.Property<string>("Title");
 
-                    b.Property<long>("UserId");
+                    b.Property<int>("UserId");
 
                     b.HasKey("NoteID");
 

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using FundooBusinessLayer.Interfaces;
 using FundooCommonLayer.Model;
+using FundooCommonLayer.ModelRequest;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -24,17 +25,18 @@ namespace FundooNotes.Controllers
 
     [HttpPost]
     [Route("AddNotes")]
-    public IActionResult AddNotes([FromBody] NotesDB notesDB)
+    public IActionResult AddNotes([FromBody] RequestedNotes requestedNotes)
     {
       bool status;
       string message;
       var user = HttpContext.User;
+      NotesDB notesDB = new NotesDB();
       if (user.HasClaim(c => c.Type == "Typetoken"))
       {
         if (user.Claims.FirstOrDefault(c => c.Type == "Typetoken").Value == "Login")
         {
-          notesDB.UserId = Convert.ToInt32(user.Claims.FirstOrDefault(c => c.Type == "UserId").Value);
-          notesDB = _notesBusiness.AddNotes(notesDB);
+           int UserId = Convert.ToInt32(user.Claims.FirstOrDefault(c => c.Type == "UserId").Value);
+          notesDB = _notesBusiness.AddNotes(requestedNotes,UserId);
           if (notesDB != null)
           {
             status = true;
@@ -51,7 +53,9 @@ namespace FundooNotes.Controllers
       }
       return BadRequest("used invalid token");
     }
+
     [HttpGet]
+    [Route("GetNotes")]
     public IActionResult GetNotes()
     {
       List<NotesDB> notesDBs = new List<NotesDB>();
@@ -80,6 +84,7 @@ namespace FundooNotes.Controllers
       }
       return BadRequest("used invalid token");
     }
+
     [HttpPut]
     [Route("UpdateNotes")]
     public IActionResult UpdateNotes([FromBody] NotesDB notesDB)
@@ -109,8 +114,9 @@ namespace FundooNotes.Controllers
       }
       return BadRequest("used invalid token");
     }
+
     [HttpDelete]
-    [Route("{id}")]
+    [Route("Delete/{id}")]
     public IActionResult DeleteNotes(int noteid)
     {
       bool status;
@@ -140,7 +146,7 @@ namespace FundooNotes.Controllers
     }
     [HttpPost]
     [Route("Trash")]
-    public IActionResult TrashNotes(int userid,int noteid)
+    public IActionResult TrashNotes(int userid, int noteid)
     {
       bool status;
       string message;
@@ -167,8 +173,162 @@ namespace FundooNotes.Controllers
       }
       return BadRequest("used invalid token");
     }
+
     [HttpGet]
-    [Route("{id}")]
+    [Route("AllTrash")]
+    public IActionResult GetTrashedList()
+    {
+      List<NotesDB> notesDBs = new List<NotesDB>();
+      bool status;
+      string message;
+      var user = HttpContext.User;
+      if (user.HasClaim(c => c.Type == "Typetoken"))
+      {
+        if (user.Claims.FirstOrDefault(c => c.Type == "Typetoken").Value == "Login")
+        {
+          int UserId = Convert.ToInt32(user.Claims.FirstOrDefault(c => c.Type == "UserId").Value);
+          notesDBs = _notesBusiness.GetAllTrashed(UserId);
+          if (notesDBs != null)
+          {
+            status = true;
+            message = "All Trashed Notes";
+            return Ok(new { status, message, notesDBs });
+          }
+          else
+          {
+            status = false;
+            message = "Trashed Notes are Empty";
+            return NotFound(new { status, message });
+          }
+        }
+      }
+      return BadRequest("used invalid token");
+    }
+
+    [HttpPost]
+    [Route("Archive")]
+    public IActionResult ArchiveNotes(int userid, int noteid)
+    {
+      bool status;
+      string message;
+      var user = HttpContext.User;
+      if (user.HasClaim(c => c.Type == "Typetoken"))
+      {
+        if (user.Claims.FirstOrDefault(c => c.Type == "Typetoken").Value == "Login")
+        {
+          int UserId = Convert.ToInt32(user.Claims.FirstOrDefault(c => c.Type == "UserId").Value);
+          bool result = _notesBusiness.Archive(UserId, noteid);
+          if (result)
+          {
+            status = true;
+            message = "Note Archive";
+            return Ok(new { status, message });
+          }
+          else
+          {
+            status = false;
+            message = "Note Archive failed";
+            return NotFound(new { status, message });
+          }
+        }
+      }
+      return BadRequest("used invalid token");
+    }
+
+    [HttpGet]
+    [Route("AllArchive")]
+    public IActionResult GetArchiveList()
+    {
+      List<NotesDB> notesDBs = new List<NotesDB>();
+      bool status;
+      string message;
+      var user = HttpContext.User;
+      if (user.HasClaim(c => c.Type == "Typetoken"))
+      {
+        if (user.Claims.FirstOrDefault(c => c.Type == "Typetoken").Value == "Login")
+        {
+          int UserId = Convert.ToInt32(user.Claims.FirstOrDefault(c => c.Type == "UserId").Value);
+          notesDBs = _notesBusiness.GetAllArchive(UserId);
+          if (notesDBs != null)
+          {
+            status = true;
+            message = "All Archive Notes";
+            return Ok(new { status, message, notesDBs });
+          }
+          else
+          {
+            status = false;
+            message = "Archive Notes are Empty";
+            return NotFound(new { status, message });
+          }
+        }
+      }
+      return BadRequest("used invalid token");
+    }
+
+    [HttpPost]
+    [Route("Pinned")]
+    public IActionResult PinnedNotes(int userid, int noteid)
+    {
+      bool status;
+      string message;
+      var user = HttpContext.User;
+      if (user.HasClaim(c => c.Type == "Typetoken"))
+      {
+        if (user.Claims.FirstOrDefault(c => c.Type == "Typetoken").Value == "Login")
+        {
+          int UserId = Convert.ToInt32(user.Claims.FirstOrDefault(c => c.Type == "UserId").Value);
+          bool result = _notesBusiness.Pinned(UserId, noteid);
+          if (result)
+          {
+            status = true;
+            message = "pinned";
+            return Ok(new { status, message });
+          }
+          else
+          {
+            status = false;
+            message = "Pinned failed";
+            return NotFound(new { status, message });
+          }
+        }
+      }
+      return BadRequest("used invalid token");
+    }
+
+    [HttpGet]
+    [Route("AllPinned")]
+    public IActionResult GetPinnedList()
+    {
+      List<NotesDB> notesDBs = new List<NotesDB>();
+      bool status;
+      string message;
+      var user = HttpContext.User;
+      if (user.HasClaim(c => c.Type == "Typetoken"))
+      {
+        if (user.Claims.FirstOrDefault(c => c.Type == "Typetoken").Value == "Login")
+        {
+          int UserId = Convert.ToInt32(user.Claims.FirstOrDefault(c => c.Type == "UserId").Value);
+          notesDBs = _notesBusiness.GetAllPinned(UserId);
+          if (notesDBs != null)
+          {
+            status = true;
+            message = "All Pinned Notes";
+            return Ok(new { status, message, notesDBs });
+          }
+          else
+          {
+            status = false;
+            message = "Unpinned notes";
+            return NotFound(new { status, message });
+          }
+        }
+      }
+      return BadRequest("used invalid token");
+    }
+
+    [HttpGet]
+    [Route("GetBy/{id}")]
     public IActionResult GetNotesByNotesId(int noteid)
     {
       bool status;
@@ -198,4 +358,3 @@ namespace FundooNotes.Controllers
     }
   }
 }
-

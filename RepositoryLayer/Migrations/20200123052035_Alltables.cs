@@ -4,17 +4,34 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace FundooRepositoryLayer.Migrations
 {
-    public partial class updatetables : Migration
+    public partial class Alltables : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.CreateTable(
+                name: "label",
+                columns: table => new
+                {
+                    LabelID = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    LabelName = table.Column<string>(nullable: true),
+                    IsCreated = table.Column<DateTime>(nullable: false),
+                    IsModified = table.Column<DateTime>(nullable: false),
+                    NoteID = table.Column<int>(nullable: false),
+                    UserId = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_label", x => x.LabelID);
+                });
+
             migrationBuilder.CreateTable(
                 name: "Notes",
                 columns: table => new
                 {
                     NoteID = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    UserId = table.Column<long>(nullable: false),
+                    UserId = table.Column<int>(nullable: false),
                     Title = table.Column<string>(nullable: true),
                     Description = table.Column<string>(nullable: true),
                     Reminder = table.Column<DateTime>(nullable: false),
@@ -35,7 +52,7 @@ namespace FundooRepositoryLayer.Migrations
                 name: "Users",
                 columns: table => new
                 {
-                    UserId = table.Column<long>(nullable: false)
+                    UserId = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     FirstName = table.Column<string>(nullable: true),
                     LastName = table.Column<string>(nullable: true),
@@ -61,6 +78,9 @@ namespace FundooRepositoryLayer.Migrations
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "label");
+
             migrationBuilder.DropTable(
                 name: "Notes");
 

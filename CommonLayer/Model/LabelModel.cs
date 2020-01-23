@@ -17,6 +17,6 @@
     public DateTime IsModified { get; set; }
     public int NoteID { get; set; }
     [ForeignKey("Users")]
-    public long UserId { get; set; }
+    public int UserId { get; set; }
   }
 }

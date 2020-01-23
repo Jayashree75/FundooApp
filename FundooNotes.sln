@@ -3,13 +3,15 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29519.181
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FundooNotes", "FundooNotes\FundooNotes.csproj", "{E8CAB52C-1575-4743-8F04-74A94AE62A6E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FundooNotes", "FundooNotes\FundooNotes.csproj", "{E8CAB52C-1575-4743-8F04-74A94AE62A6E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FundooBusinessLayer", "BusinessLayer\FundooBusinessLayer.csproj", "{4DE08C0C-46BF-47CA-89ED-19A54564FE36}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FundooBusinessLayer", "BusinessLayer\FundooBusinessLayer.csproj", "{4DE08C0C-46BF-47CA-89ED-19A54564FE36}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FundooCommonLayer", "CommonLayer\FundooCommonLayer.csproj", "{42EE5BB5-B870-41C4-BC96-6B8A1EE335E3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FundooCommonLayer", "CommonLayer\FundooCommonLayer.csproj", "{42EE5BB5-B870-41C4-BC96-6B8A1EE335E3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FundooRepositoryLayer", "RepositoryLayer\FundooRepositoryLayer.csproj", "{6D609C31-30FC-4A99-B7BD-258F32354999}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FundooRepositoryLayer", "RepositoryLayer\FundooRepositoryLayer.csproj", "{6D609C31-30FC-4A99-B7BD-258F32354999}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MSMQListener", "MSMQListener\MSMQListener.csproj", "{46927C78-EB55-4676-A3F4-1F951006E925}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{6D609C31-30FC-4A99-B7BD-258F32354999}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6D609C31-30FC-4A99-B7BD-258F32354999}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6D609C31-30FC-4A99-B7BD-258F32354999}.Release|Any CPU.Build.0 = Release|Any CPU
+		{46927C78-EB55-4676-A3F4-1F951006E925}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{46927C78-EB55-4676-A3F4-1F951006E925}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{46927C78-EB55-4676-A3F4-1F951006E925}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{46927C78-EB55-4676-A3F4-1F951006E925}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

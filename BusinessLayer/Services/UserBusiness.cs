@@ -82,13 +82,13 @@ namespace FundooBusinessLayer.Services
     /// </summary>
     /// <param name="userDetails"></param>
     /// <returns></returns>
-    public UserDetails Register(UserDetails userDetails)
+    public UserDetails Register(Registratin registratin)
     {
       try
       {
-        if (userDetails != null)
+        if (registratin != null)
         {
-          return _userRepository.Register(userDetails);
+          return _userRepository.Register(registratin);
         }
         else
         {

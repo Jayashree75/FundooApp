@@ -2,6 +2,7 @@
 {
   using FundooBusinessLayer.Interfaces;
   using FundooCommonLayer.Model;
+  using FundooCommonLayer.ModelRequest;
   using FundooRepositoryLayer.Interfaces;
   using System;
   using System.Collections.Generic;
@@ -15,7 +16,7 @@
     {
       _labelRepository = labelRepository;
     }
-    public LabelModel AddLabels(string labels, long userid)
+    public LabelModel AddLabels(string labels, int userid)
     {
       if (string.IsNullOrWhiteSpace(labels) || userid <= 0)
         return null;
@@ -23,9 +24,28 @@
         return _labelRepository.AddLabels(labels, userid);
     }
 
-    public LabelModel UpdateLabels(string labels, long userid)
+    public bool DeleteLabel(int labelid)
     {
-      throw new NotImplementedException();
+      if(labelid!=0)
+      {
+        return _labelRepository.DeleteLabel(labelid);
+      }
+      else
+      {
+        return false;
+      }
+    }
+
+    public LabelModel UpdateLabels(RequestedLabel requestedLabel, int userid, int labelid)
+    {
+      if (userid != 0)
+      {
+        return _labelRepository.UpdateLabels(requestedLabel, userid,labelid);
+      }
+      else
+      {
+        return null;
+      }
     }
   }
 }
