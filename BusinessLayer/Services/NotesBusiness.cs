@@ -7,19 +7,20 @@
   using System;
   using System.Collections.Generic;
   using System.Text;
+    using System.Threading.Tasks;
 
-  public class NotesBusiness : INotesBusiness
+    public class NotesBusiness : INotesBusiness
   {
     private readonly INotesRepository _notesRepository;
     public NotesBusiness(INotesRepository notesRepository)
     {
       _notesRepository = notesRepository;
     }
-    public NotesDB AddNotes(RequestedNotes requestedNotes,int userid)
+    public async Task<NoteResponseModel> AddNotes(RequestedNotes requestedNotes,int userid)
     {
       if (requestedNotes != null)
       {
-        return _notesRepository.AddNotes(requestedNotes,userid);
+        return await _notesRepository.AddNotes(requestedNotes,userid);
       }
       else
       {
@@ -27,11 +28,11 @@
       }
     }
 
-    public bool Archive(int userid, int noteid)
+    public async Task<bool> Archive(int userid, int noteid)
     {
       if(userid!=0 && noteid!=0)
       {
-        return _notesRepository.Archive(userid, noteid);
+        return await _notesRepository.Archive(userid, noteid);
       }
       else
       {
@@ -39,11 +40,11 @@
       }
     }
 
-    public bool DeleteNotes(int noteid)
+    public async Task<bool> DeleteNotes(int noteid)
     { 
       if(noteid!=0)
       {
-        return _notesRepository.DeleteNotes(noteid);
+        return await _notesRepository.DeleteNotes(noteid);
       }
       else
       {
@@ -87,7 +88,7 @@
       }
     }
 
-    public List<NotesDB> GetNotes(int userid)
+    public List<NoteResponseModel> GetNotes(int userid)
     {
       if(userid!=0)
       {
@@ -111,11 +112,11 @@
       }
     }
 
-    public bool Pinned(int userid, int noteid)
+    public async Task<bool> Pinned(int userid, int noteid)
     {
      if(userid!=0 && noteid!=0)
       {
-        return _notesRepository.Pinned(userid, noteid);
+        return await _notesRepository.Pinned(userid, noteid);
       }
      else
       {
@@ -123,11 +124,11 @@
       }
     }
 
-    public bool Trash(int userid, int noteid)
+    public async Task<bool> Trash(int userid, int noteid)
     {
       if(userid!=0 && noteid!=0)
       {
-        return _notesRepository.Trash(userid, noteid);
+        return await _notesRepository.Trash(userid, noteid);
       }
       else
       {
@@ -135,11 +136,11 @@
       }
     }
 
-    public NotesDB UpdateNotes(NotesDB notesDB)
+    public async Task<NotesDB> UpdateNotes(RequestedNotes requestedNotes,int noteid,int userid)
     {
-      if(notesDB!=null)
+      if(requestedNotes != null)
       {
-        return _notesRepository.UpdateNotes(notesDB);
+        return await _notesRepository.UpdateNotes(requestedNotes,noteid,userid);
       }
       else
       {

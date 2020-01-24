@@ -11,15 +11,16 @@ namespace FundooRepositoryLayer.Interfaces
   using System;
   using System.Collections.Generic;
   using System.Text;
+    using System.Threading.Tasks;
 
-  /// <summary>
-  /// This is an Interface of User Repository.
-  /// </summary>
-  public interface IUserRepository
+    /// <summary>
+    /// This is an Interface of User Repository.
+    /// </summary>
+    public interface IUserRepository
   {
-    UserDetails Register(Registratin registratin);
+    Task<UserDetails> Register(Registratin registratin);
     ResponseModel Login(Login login);
     ResponseModel ForgetPassword(ForgetPassword forgetPassword);
-    bool ResetPassword(ResetPassword resetPassword);
+    Task<bool> ResetPassword(ResetPassword resetPassword,int userid);
   }
 }

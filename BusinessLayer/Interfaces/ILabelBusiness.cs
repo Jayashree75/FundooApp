@@ -5,13 +5,14 @@
     using System;
   using System.Collections.Generic;
   using System.Text;
+    using System.Threading.Tasks;
 
-
-  public interface ILabelBusiness
+    public interface ILabelBusiness
   {
-    LabelModel AddLabels(string labels, int userid);
-    LabelModel UpdateLabels(RequestedLabel requestedLabel, int userid, int labelid);
-    bool DeleteLabel(int labelid);
+    Task<LabelModel> AddLabels(RequestedLabel requestedLabel, int userid);
+    Task<LabelModel> UpdateLabels(RequestedLabel requestedLabel, int userid, int labelid);
+    Task<bool> DeleteLabel(int labelid);
+    List<LabelModel> GetLabel(int userid);
 
   }
 }

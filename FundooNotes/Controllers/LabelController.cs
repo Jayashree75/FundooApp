@@ -23,8 +23,7 @@
       _labelBusiness = labelBusiness;
     }
     [HttpPost]
-    [Route("AddLabels")]
-    public IActionResult AddLabels(string labels)
+    public async Task<IActionResult> AddLabels(RequestedLabel requestedlabel)
     {
       bool status;
       string message;
@@ -34,7 +33,7 @@
         if (user.Claims.FirstOrDefault(c => c.Type == "Typetoken").Value == "Login")
         {
           int userid = Convert.ToInt32(user.Claims.FirstOrDefault(c => c.Type == "UserId").Value);
-          var labelModel = _labelBusiness.AddLabels(labels, userid);
+          var labelModel = await _labelBusiness.AddLabels(requestedlabel, userid);
           if (labelModel != null)
           {
             status = true;
@@ -52,8 +51,8 @@
       return BadRequest("used invalid token");
     }
     [HttpPut]
-    [Route("UpdateLabel")]
-    public IActionResult UpdateLabels(RequestedLabel requestedlabel)
+    [Route("{labelid}")]
+    public async Task<IActionResult> UpdateLabels(RequestedLabel requestedlabel,int labelid)
     {
       bool status;
       string message;
@@ -63,7 +62,7 @@
         if (user.Claims.FirstOrDefault(c => c.Type == "Typetoken").Value == "Login")
         {
           int userid = Convert.ToInt32(user.Claims.FirstOrDefault(c => c.Type == "UserId").Value);
-          var labelModel = _labelBusiness.UpdateLabels(requestedlabel, userid, requestedlabel.LabelId);
+          var labelModel = await _labelBusiness.UpdateLabels(requestedlabel, userid, labelid);
           if (labelModel != null)
           {
             status = true;
@@ -80,8 +79,8 @@
       }
       return BadRequest("used invalid token");
     }
-    [HttpDelete]
-    public IActionResult DeleteLabels(int labelid)
+    [HttpDelete("{labelid}")]
+    public async Task<IActionResult> DeleteLabels(int labelid)
     {
       bool status;
       string message;
@@ -91,7 +90,7 @@
         if (user.Claims.FirstOrDefault(c => c.Type == "Typetoken").Value == "Login")
         {
           int userid = Convert.ToInt32(user.Claims.FirstOrDefault(c => c.Type == "UserId").Value);
-          var labelModel = _labelBusiness.DeleteLabel(labelid);
+          var labelModel = await _labelBusiness.DeleteLabel(labelid);
           if (labelModel != false)
           {
             status = true;
@@ -102,6 +101,34 @@
           {
             status = false;
             message = "label Deletion failed";
+            return NotFound(new { status, message });
+          }
+        }
+      }
+      return BadRequest("used invalid token");
+    }
+    [HttpGet]
+    public IActionResult GetAllLabel()
+    {
+      bool status;
+      string message;
+      var user = HttpContext.User;
+      if (user.HasClaim(c => c.Type == "Typetoken"))
+      {
+        if (user.Claims.FirstOrDefault(c => c.Type == "Typetoken").Value == "Login")
+        {
+          int userId = Convert.ToInt32(user.Claims.FirstOrDefault(c => c.Type == "UserId").Value);
+          var labelmodel = _labelBusiness.GetLabel(userId);
+          if (labelmodel != null)
+          {
+            status = true;
+            message = "All label";
+            return Ok(new { status, message, labelmodel });
+          }
+          else
+          {
+            status = false;
+            message = "not a valid label id";
             return NotFound(new { status, message });
           }
         }

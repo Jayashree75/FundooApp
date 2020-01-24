@@ -14,12 +14,13 @@ namespace FundooRepositoryLayer.Services
   using System.Collections.Generic;
   using System.Linq;
   using System.Text;
+    using System.Threading.Tasks;
 
-  /// <summary>
-  /// This is the class of UserRepository.
-  /// </summary>
-  /// <seealso cref="FundooRepositoryLayer.Interfaces.IUserRepository" />
-  public class UserRepository : IUserRepository
+    /// <summary>
+    /// This is the class of UserRepository.
+    /// </summary>
+    /// <seealso cref="FundooRepositoryLayer.Interfaces.IUserRepository" />
+    public class UserRepository : IUserRepository
   {
     private readonly UserContext _userContext;
 
@@ -104,7 +105,7 @@ namespace FundooRepositoryLayer.Services
     /// </summary>
     /// <param name="userDetails">The user details.</param>
     /// <returns>returns userdetails</returns>
-    public UserDetails Register(Registratin registratin)
+    public async Task<UserDetails> Register(Registratin registratin)
     {
       try
       {
@@ -121,7 +122,7 @@ namespace FundooRepositoryLayer.Services
           IsModified=DateTime.Now
         };
         _userContext.Users.Add(model);
-        _userContext.SaveChanges();
+        await _userContext.SaveChangesAsync();
         return model;
       }
       catch (Exception e)
@@ -135,11 +136,11 @@ namespace FundooRepositoryLayer.Services
     /// </summary>
     /// <param name="resetPassword">The reset password.</param>
     /// <returns>it return true if password changed sucessfully</returns>
-  public bool ResetPassword(ResetPassword resetPassword)
+  public async Task<bool> ResetPassword(ResetPassword resetPassword,int userid)
     {
       try
       {
-        UserDetails userDetails = _userContext.Users.FirstOrDefault(user => user.UserId == resetPassword.UserId);
+        UserDetails userDetails = _userContext.Users.FirstOrDefault(user => user.UserId == userid);
         if (userDetails != null)
         {
           resetPassword.Password = EncodeDecode.EncodePassword(resetPassword.Password);
@@ -147,7 +148,7 @@ namespace FundooRepositoryLayer.Services
           userDetails.IsModified = DateTime.Now;
           var user = _userContext.Users.Attach(userDetails);
           user.State = Microsoft.EntityFrameworkCore.EntityState.Modified;
-          _userContext.SaveChanges();
+          await _userContext.SaveChangesAsync();
           return true;
         }
         return false;

@@ -12,6 +12,7 @@ namespace FundooBusinessLayer.Services
   using FundooRepositoryLayer.Interfaces;
   using FundooRepositoryLayer.Services;
   using System;
+  using System.Threading.Tasks;
 
   /// <summary>
   /// This is the class of UserBusiness.
@@ -82,13 +83,13 @@ namespace FundooBusinessLayer.Services
     /// </summary>
     /// <param name="userDetails"></param>
     /// <returns></returns>
-    public UserDetails Register(Registratin registratin)
+    public async Task<UserDetails> Register(Registratin registratin)
     {
       try
       {
         if (registratin != null)
         {
-          return _userRepository.Register(registratin);
+          return await _userRepository.Register(registratin);
         }
         else
         {
@@ -105,17 +106,17 @@ namespace FundooBusinessLayer.Services
     /// </summary>
     /// <param name="resetPassword"></param>
     /// <returns></returns>
-    public bool ResetPassword(ResetPassword resetPassword)
+    public async Task<bool> ResetPassword(ResetPassword resetPassword,int userid)
     {
       try
       {
-        if ((resetPassword.UserId == 0) || (resetPassword.Password == null))
+        if (resetPassword.Password != null || userid!=0)
         {
-          return false;
+          return await _userRepository.ResetPassword(resetPassword,userid);        
         }
         else
         {
-          return _userRepository.ResetPassword(resetPassword);
+          return false;
         }
       }
       catch (Exception e)

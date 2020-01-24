@@ -15,7 +15,6 @@
     public string LabelName { get; set; }
     public DateTime IsCreated { get; set; }
     public DateTime IsModified { get; set; }
-    public int NoteID { get; set; }
     [ForeignKey("Users")]
     public int UserId { get; set; }
   }

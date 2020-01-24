@@ -10,7 +10,8 @@ namespace FundooNotes.Controllers
   using System.Linq;
   using System.Security.Claims;
   using System.Text;
-  using CommonLayer.Model;
+    using System.Threading.Tasks;
+    using CommonLayer.Model;
   using FundooBusinessLayer.Interfaces;
   using FundooCommonLayer.Model;
   using FundooCommonLayer.ModelRequest;
@@ -44,11 +45,11 @@ namespace FundooNotes.Controllers
     /// <returns></returns>
     [HttpPost]
     [Route("Registration")]
-    public IActionResult Registration([FromBody] Registratin registratin)
+    public async Task<IActionResult> Registration([FromBody] Registratin registratin)
     {
       try
       {
-        var result = _userBusiness.Register(registratin);
+        var result =await _userBusiness.Register(registratin);
         if (result != null)
         {
           var sucess = true;
@@ -106,7 +107,7 @@ namespace FundooNotes.Controllers
     /// <param name="forgetPassword"></param>
     /// <returns></returns>
     [HttpPost]
-    [Route("Forget")]
+    [Route("ForgetPassword")]
     public IActionResult ForgetPassword(ForgetPassword forgetPassword)
     {
       ResponseModel data = _userBusiness.ForgetPassword(forgetPassword);
@@ -133,8 +134,8 @@ namespace FundooNotes.Controllers
     /// <returns></returns>
     [HttpPost]
     [Authorize]
-    [Route("Reset")]
-    public IActionResult ResetPassword(ResetPassword resetPassword)
+    [Route("ResetPassword")]
+    public async Task<IActionResult> ResetPassword(ResetPassword resetPassword)
     {
       try
       {
@@ -145,8 +146,8 @@ namespace FundooNotes.Controllers
         {
           if (user.Claims.FirstOrDefault(c => c.Type == "Typetoken").Value == "ForgetPassword")
           {
-            resetPassword.UserId = Convert.ToInt32(user.Claims.FirstOrDefault(c => c.Type == "UserId").Value);
-            status = _userBusiness.ResetPassword(resetPassword);
+            int UserId = Convert.ToInt32(user.Claims.FirstOrDefault(c => c.Type == "UserId").Value);
+            status =await _userBusiness.ResetPassword(resetPassword, UserId);
             if (status)
             {
               status = true;

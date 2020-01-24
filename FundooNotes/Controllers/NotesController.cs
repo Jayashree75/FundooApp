@@ -24,19 +24,18 @@ namespace FundooNotes.Controllers
     }
 
     [HttpPost]
-    [Route("AddNotes")]
-    public IActionResult AddNotes([FromBody] RequestedNotes requestedNotes)
+    public async Task<IActionResult> AddNotes([FromBody] RequestedNotes requestedNotes)
     {
       bool status;
       string message;
       var user = HttpContext.User;
-      NotesDB notesDB = new NotesDB();
+      NoteResponseModel notesDB = new NoteResponseModel();
       if (user.HasClaim(c => c.Type == "Typetoken"))
       {
         if (user.Claims.FirstOrDefault(c => c.Type == "Typetoken").Value == "Login")
         {
            int UserId = Convert.ToInt32(user.Claims.FirstOrDefault(c => c.Type == "UserId").Value);
-          notesDB = _notesBusiness.AddNotes(requestedNotes,UserId);
+          notesDB = await _notesBusiness.AddNotes(requestedNotes,UserId);
           if (notesDB != null)
           {
             status = true;
@@ -53,12 +52,40 @@ namespace FundooNotes.Controllers
       }
       return BadRequest("used invalid token");
     }
+    [HttpPut]
+    [Route("{noteid}")]
+    public async Task<IActionResult> UpdateNotes([FromBody] RequestedNotes requestedNotes, int noteid)
+    {
+      bool status;
+      string message;
+      var user = HttpContext.User;
+      if (user.HasClaim(c => c.Type == "Typetoken"))
+      {
+        if (user.Claims.FirstOrDefault(c => c.Type == "Typetoken").Value == "Login")
+        {
+          int UserId = Convert.ToInt32(user.Claims.FirstOrDefault(c => c.Type == "UserId").Value);
+          NotesDB notesDB = await _notesBusiness.UpdateNotes(requestedNotes, noteid, UserId);
+          if (requestedNotes != null)
+          {
+            status = true;
+            message = "Notes are Updated";
+            return Ok(new { status, message, requestedNotes });
+          }
+          else
+          {
+            status = false;
+            message = "Notes updation failed";
+            return NotFound(new { status, message });
+          }
+        }
+      }
+      return BadRequest("used invalid token");
+    }
 
     [HttpGet]
-    [Route("GetNotes")]
     public IActionResult GetNotes()
     {
-      List<NotesDB> notesDBs = new List<NotesDB>();
+      List<NoteResponseModel> notesDBs = new List<NoteResponseModel>();
       bool status;
       string message;
       var user = HttpContext.User;
@@ -85,9 +112,9 @@ namespace FundooNotes.Controllers
       return BadRequest("used invalid token");
     }
 
-    [HttpPut]
-    [Route("UpdateNotes")]
-    public IActionResult UpdateNotes([FromBody] NotesDB notesDB)
+    [HttpGet]
+    [Route("{noteid}")]
+    public IActionResult GetNotesByNotesId(int noteid)
     {
       bool status;
       string message;
@@ -96,18 +123,18 @@ namespace FundooNotes.Controllers
       {
         if (user.Claims.FirstOrDefault(c => c.Type == "Typetoken").Value == "Login")
         {
-          notesDB.UserId = Convert.ToInt32(user.Claims.FirstOrDefault(c => c.Type == "UserId").Value);
-          notesDB = _notesBusiness.UpdateNotes(notesDB);
+          int userId = Convert.ToInt32(user.Claims.FirstOrDefault(c => c.Type == "UserId").Value);
+          NotesDB notesDB = _notesBusiness.GetNotesByNoteId(noteid, userId);
           if (notesDB != null)
           {
             status = true;
-            message = "Notes are Updated";
+            message = "Notes all data";
             return Ok(new { status, message, notesDB });
           }
           else
           {
             status = false;
-            message = "Notes updation failed";
+            message = "Note is not present";
             return NotFound(new { status, message });
           }
         }
@@ -115,9 +142,8 @@ namespace FundooNotes.Controllers
       return BadRequest("used invalid token");
     }
 
-    [HttpDelete]
-    [Route("Delete/{id}")]
-    public IActionResult DeleteNotes(int noteid)
+    [HttpDelete("{noteid}")]
+    public async Task<IActionResult> DeleteNotes(int noteid)
     {
       bool status;
       string message;
@@ -127,7 +153,7 @@ namespace FundooNotes.Controllers
         if (user.Claims.FirstOrDefault(c => c.Type == "Typetoken").Value == "Login")
         {
           int UserId = Convert.ToInt32(user.Claims.FirstOrDefault(c => c.Type == "UserId").Value);
-          bool result = _notesBusiness.DeleteNotes(noteid);
+          bool result = await _notesBusiness.DeleteNotes(noteid);
           if (result)
           {
             status = true;
@@ -144,9 +170,10 @@ namespace FundooNotes.Controllers
       }
       return BadRequest("used invalid token");
     }
+
     [HttpPost]
-    [Route("Trash")]
-    public IActionResult TrashNotes(int userid, int noteid)
+    [Route("Trash/{noteid}")]
+    public async Task<IActionResult> TrashNotes(int noteid)
     {
       bool status;
       string message;
@@ -156,7 +183,7 @@ namespace FundooNotes.Controllers
         if (user.Claims.FirstOrDefault(c => c.Type == "Typetoken").Value == "Login")
         {
           int UserId = Convert.ToInt32(user.Claims.FirstOrDefault(c => c.Type == "UserId").Value);
-          bool result = _notesBusiness.Trash(UserId, noteid);
+          bool result =await _notesBusiness.Trash(UserId, noteid);
           if (result)
           {
             status = true;
@@ -175,7 +202,7 @@ namespace FundooNotes.Controllers
     }
 
     [HttpGet]
-    [Route("AllTrash")]
+    [Route("Trashed")]
     public IActionResult GetTrashedList()
     {
       List<NotesDB> notesDBs = new List<NotesDB>();
@@ -206,8 +233,8 @@ namespace FundooNotes.Controllers
     }
 
     [HttpPost]
-    [Route("Archive")]
-    public IActionResult ArchiveNotes(int userid, int noteid)
+    [Route("Archive/{noteid}")]
+    public async Task<IActionResult> ArchiveNotes(int noteid)
     {
       bool status;
       string message;
@@ -217,7 +244,7 @@ namespace FundooNotes.Controllers
         if (user.Claims.FirstOrDefault(c => c.Type == "Typetoken").Value == "Login")
         {
           int UserId = Convert.ToInt32(user.Claims.FirstOrDefault(c => c.Type == "UserId").Value);
-          bool result = _notesBusiness.Archive(UserId, noteid);
+          bool result = await _notesBusiness.Archive(UserId, noteid);
           if (result)
           {
             status = true;
@@ -236,7 +263,7 @@ namespace FundooNotes.Controllers
     }
 
     [HttpGet]
-    [Route("AllArchive")]
+    [Route("Archive")]
     public IActionResult GetArchiveList()
     {
       List<NotesDB> notesDBs = new List<NotesDB>();
@@ -267,8 +294,8 @@ namespace FundooNotes.Controllers
     }
 
     [HttpPost]
-    [Route("Pinned")]
-    public IActionResult PinnedNotes(int userid, int noteid)
+    [Route("Pinned/{noteid}")]
+    public async Task<IActionResult> PinnedNotes( int noteid)
     {
       bool status;
       string message;
@@ -278,7 +305,7 @@ namespace FundooNotes.Controllers
         if (user.Claims.FirstOrDefault(c => c.Type == "Typetoken").Value == "Login")
         {
           int UserId = Convert.ToInt32(user.Claims.FirstOrDefault(c => c.Type == "UserId").Value);
-          bool result = _notesBusiness.Pinned(UserId, noteid);
+          bool result = await _notesBusiness.Pinned(UserId, noteid);
           if (result)
           {
             status = true;
@@ -297,7 +324,7 @@ namespace FundooNotes.Controllers
     }
 
     [HttpGet]
-    [Route("AllPinned")]
+    [Route("Pinned")]
     public IActionResult GetPinnedList()
     {
       List<NotesDB> notesDBs = new List<NotesDB>();
@@ -325,36 +352,6 @@ namespace FundooNotes.Controllers
         }
       }
       return BadRequest("used invalid token");
-    }
-
-    [HttpGet]
-    [Route("GetBy/{id}")]
-    public IActionResult GetNotesByNotesId(int noteid)
-    {
-      bool status;
-      string message;
-      var user = HttpContext.User;
-      if (user.HasClaim(c => c.Type == "Typetoken"))
-      {
-        if (user.Claims.FirstOrDefault(c => c.Type == "Typetoken").Value == "Login")
-        {
-          int userId = Convert.ToInt32(user.Claims.FirstOrDefault(c => c.Type == "UserId").Value);
-          NotesDB notesDB = _notesBusiness.GetNotesByNoteId(noteid, userId);
-          if (notesDB != null)
-          {
-            status = true;
-            message = "Notes all data";
-            return Ok(new { status, message, notesDB });
-          }
-          else
-          {
-            status = false;
-            message = "Note is not present";
-            return NotFound(new { status, message });
-          }
-        }
-      }
-      return BadRequest("used invalid token");
-    }
+    }    
   }
 }

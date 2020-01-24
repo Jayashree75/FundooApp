@@ -7,7 +7,7 @@
   using System;
   using System.Collections.Generic;
   using System.Linq;
-
+  using System.Threading.Tasks;
 
   public class NotesRepository : INotesRepository
   {
@@ -16,7 +16,7 @@
     {
       _userContext = userContext;
     }
-    public NotesDB AddNotes(RequestedNotes requestedNotes,int userid)
+    public async Task<NoteResponseModel> AddNotes(RequestedNotes requestedNotes, int userid)
     {
       NotesDB notesdb = new NotesDB()
       {
@@ -26,21 +26,34 @@
         Reminder = DateTime.Now,
         IsCreated = DateTime.Now,
         IsModified = DateTime.Now,
-        IsPin=requestedNotes.IsPin,
-        IsArchive=requestedNotes.IsArchive
+        IsPin = requestedNotes.IsPin,
+        IsArchive = requestedNotes.IsArchive
       };
       _userContext.Notes.Add(notesdb);
-      _userContext.SaveChanges();
-      return notesdb;
+      await _userContext.SaveChangesAsync();
+      NoteResponseModel noteResponseModel = new NoteResponseModel()
+      {
+        NoteID = notesdb.NoteID,
+        Title = notesdb.Title,
+        Description = notesdb.Description,
+        Reminder = notesdb.Reminder,
+        IsCreated = notesdb.IsCreated,
+        IsModified = notesdb.IsModified,
+        IsPin = notesdb.IsPin,
+        IsArchive = notesdb.IsArchive,
+        Color = notesdb.Color,
+        Image = notesdb.Color
+      };
+      return noteResponseModel;
     }
 
-    public bool DeleteNotes(int noteid)
+    public async Task<bool> DeleteNotes(int noteid)
     {
       NotesDB notes = _userContext.Notes.FirstOrDefault(c => c.NoteID == noteid);
       if (notes != null)
       {
         _userContext.Notes.Remove(notes);
-        this._userContext.SaveChanges();
+        await this._userContext.SaveChangesAsync();
         return true;
       }
       else
@@ -49,17 +62,24 @@
       }
     }
 
-    public List<NotesDB> GetNotes(int userid)
+    public List<NoteResponseModel> GetNotes(int userid)
     {
-      List<NotesDB> notesDBs = _userContext.Notes.Where(a => a.UserId == userid).ToList();
-      if (notesDBs != null)
-      {
-        return notesDBs;
-      }
-      else
-      {
-        return null;
-      }
+      List<NoteResponseModel> notesDBs = _userContext.Notes.Where(a => a.UserId == userid).
+                                              Select(a => new NoteResponseModel
+                                              {
+                                                NoteID = a.NoteID,
+                                                Title = a.Title,
+                                                Description = a.Description,
+                                                Reminder = a.Reminder,
+                                                Image = a.Image,
+                                                IsArchive = a.IsArchive,
+                                                IsPin = a.IsPin,
+                                                IsTrash = a.IsTrash,
+                                                IsCreated = a.IsCreated,
+                                                IsModified = a.IsModified
+                                              }).ToList();
+      return notesDBs;
+
     }
 
     public NotesDB GetNotesByNoteId(int noteid, int userid)
@@ -74,18 +94,22 @@
         return null;
       }
     }
-    public NotesDB UpdateNotes(NotesDB notesDB)
+    public async Task<NotesDB> UpdateNotes(RequestedNotes requestedNotes, int noteid, int userid)
     {
-      NotesDB notesDB1 = _userContext.Notes.FirstOrDefault(c => (c.UserId == notesDB.UserId) && (c.NoteID == notesDB.NoteID));
-      if (notesDB1 != null)
+      var notes = _userContext.Notes.FirstOrDefault(c => (c.UserId == userid) && (c.NoteID == noteid));
+      NotesDB notesDB = new NotesDB();
+      if (notes != null)
       {
-        notesDB1.Title = notesDB.Title;
-        notesDB1.Description = notesDB.Description;
-        notesDB1.IsModified = notesDB.IsModified;
-        var note = this._userContext.Notes.Attach(notesDB1);
+        notes.Title = requestedNotes.Title;
+        notes.Description = requestedNotes.Description;
+        notes.IsModified = DateTime.Now;
+        notes.Reminder = DateTime.Now;
+        notes.Color = requestedNotes.Color;
+        notes.Image = requestedNotes.Image;
+        var note = this._userContext.Notes.Attach(notes);
         note.State = Microsoft.EntityFrameworkCore.EntityState.Modified;
-        this._userContext.SaveChanges();
-        return notesDB1;
+        await this._userContext.SaveChangesAsync();
+        return notes;
       }
       else
       {
@@ -93,7 +117,7 @@
       }
     }
 
-    public bool Pinned(int userid, int noteid)
+    public async Task<bool> Pinned(int userid, int noteid)
     {
       bool flag = false;
       NotesDB notes = _userContext.Notes.FirstOrDefault(c => (c.UserId == userid) && (c.NoteID == noteid));
@@ -104,7 +128,7 @@
           notes.IsPin = true;
           var note = this._userContext.Notes.Attach(notes);
           note.State = Microsoft.EntityFrameworkCore.EntityState.Modified;
-          this._userContext.SaveChanges();
+          await this._userContext.SaveChangesAsync();
           flag = true;
         }
         else
@@ -112,7 +136,7 @@
           notes.IsPin = false;
           var note = this._userContext.Notes.Attach(notes);
           note.State = Microsoft.EntityFrameworkCore.EntityState.Modified;
-          this._userContext.SaveChanges();
+          await this._userContext.SaveChangesAsync();
           flag = false;
         }
       }
@@ -132,7 +156,7 @@
       }
     }
 
-    public bool Trash(int userid, int noteid)
+    public async Task<bool> Trash(int userid, int noteid)
     {
       bool flag = false;
       NotesDB notes = _userContext.Notes.FirstOrDefault(c => (c.UserId == userid) && (c.NoteID == noteid));
@@ -143,7 +167,7 @@
           notes.IsTrash = true;
           var note = this._userContext.Notes.Attach(notes);
           note.State = Microsoft.EntityFrameworkCore.EntityState.Modified;
-          this._userContext.SaveChanges();
+          await this._userContext.SaveChangesAsync();
           flag = true;
         }
         else
@@ -151,7 +175,7 @@
           notes.IsTrash = false;
           var note = this._userContext.Notes.Attach(notes);
           note.State = Microsoft.EntityFrameworkCore.EntityState.Modified;
-          this._userContext.SaveChanges();
+          await this._userContext.SaveChangesAsync();
           flag = false;
         }
       }
@@ -171,7 +195,7 @@
       }
     }
 
-    public bool Archive(int userid, int noteid)
+    public async Task<bool> Archive(int userid, int noteid)
     {
       bool flag = false;
       NotesDB notes = _userContext.Notes.FirstOrDefault(c => (c.UserId == userid) && (c.NoteID == noteid));
@@ -182,7 +206,7 @@
           notes.IsArchive = true;
           var note = this._userContext.Notes.Attach(notes);
           note.State = Microsoft.EntityFrameworkCore.EntityState.Modified;
-          this._userContext.SaveChanges();
+          await this._userContext.SaveChangesAsync();
           flag = true;
         }
         else
@@ -190,7 +214,7 @@
           notes.IsArchive = false;
           var note = this._userContext.Notes.Attach(notes);
           note.State = Microsoft.EntityFrameworkCore.EntityState.Modified;
-          this._userContext.SaveChanges();
+          await this._userContext.SaveChangesAsync();
           flag = false;
         }
       }
@@ -209,5 +233,6 @@
         return null;
       }
     }
+
   }
 }

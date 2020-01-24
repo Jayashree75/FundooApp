@@ -7,28 +7,28 @@
   using System;
   using System.Collections.Generic;
   using System.Text;
+    using System.Threading.Tasks;
 
-
-  public class LabelBusiness : ILabelBusiness
+    public class LabelBusiness : ILabelBusiness
   {
     private readonly ILabelRepository _labelRepository;
     public LabelBusiness(ILabelRepository labelRepository)
     {
       _labelRepository = labelRepository;
     }
-    public LabelModel AddLabels(string labels, int userid)
+    public async Task<LabelModel> AddLabels(RequestedLabel requestedLabel, int userid)
     {
-      if (string.IsNullOrWhiteSpace(labels) || userid <= 0)
+      if (requestedLabel!=null || userid <= 0)
         return null;
       else
-        return _labelRepository.AddLabels(labels, userid);
+        return await _labelRepository.AddLabels(requestedLabel, userid);
     }
 
-    public bool DeleteLabel(int labelid)
+    public async Task<bool> DeleteLabel(int labelid)
     {
       if(labelid!=0)
       {
-        return _labelRepository.DeleteLabel(labelid);
+        return await _labelRepository.DeleteLabel(labelid);
       }
       else
       {
@@ -36,11 +36,23 @@
       }
     }
 
-    public LabelModel UpdateLabels(RequestedLabel requestedLabel, int userid, int labelid)
+    public List<LabelModel> GetLabel(int userid)
+    {
+      if(userid!=0)
+      {
+        return _labelRepository.GetLabel(userid);
+      }
+      else
+      {
+        return null;
+      }
+    }
+
+    public async Task<LabelModel> UpdateLabels(RequestedLabel requestedLabel, int userid, int labelid)
     {
       if (userid != 0)
       {
-        return _labelRepository.UpdateLabels(requestedLabel, userid,labelid);
+        return await _labelRepository.UpdateLabels(requestedLabel, userid,labelid);
       }
       else
       {
