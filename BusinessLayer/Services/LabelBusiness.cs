@@ -16,7 +16,7 @@
     {
       _labelRepository = labelRepository;
     }
-    public async Task<LabelModel> AddLabels(RequestedLabel requestedLabel, int userid)
+    public async Task<LabelResponseModel> AddLabels(RequestedLabel requestedLabel, int userid)
     {
       if (requestedLabel!=null || userid <= 0)
         return null;
@@ -36,7 +36,7 @@
       }
     }
 
-    public List<LabelModel> GetLabel(int userid)
+    public List<LabelResponseModel> GetLabel(int userid)
     {
       if(userid!=0)
       {

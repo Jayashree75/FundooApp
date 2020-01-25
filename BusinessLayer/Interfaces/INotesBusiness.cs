@@ -11,14 +11,14 @@
   {
     Task<NoteResponseModel> AddNotes(RequestedNotes requestedNotes, int userid);
     List<NoteResponseModel> GetNotes(int userid);
-    Task<NotesDB> UpdateNotes(RequestedNotes requestedNotes, int noteid,int userid);
+    Task<NoteResponseModel> UpdateNotes(RequestedNotes requestedNotes, int noteid,int userid);
     Task<bool> DeleteNotes(int noteid);
-    NotesDB GetNotesByNoteId(int noteid, int userid);
+    NoteResponseModel GetNotesByNoteId(int noteid, int userid);
     Task<bool> Trash(int userid, int noteid);
     Task<bool> Archive(int userid, int noteid);
     Task<bool> Pinned(int userid, int noteid);
-    List<NotesDB> GetAllPinned(int userid);
-    List<NotesDB> GetAllTrashed(int userid);
-    List<NotesDB> GetAllArchive(int userid);
+    List<NoteResponseModel> GetAllPinned(int userid);
+    List<NoteResponseModel> GetAllTrashed(int userid);
+    List<NoteResponseModel> GetAllArchive(int userid);
   }
 }

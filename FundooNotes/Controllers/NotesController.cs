@@ -64,12 +64,12 @@ namespace FundooNotes.Controllers
         if (user.Claims.FirstOrDefault(c => c.Type == "Typetoken").Value == "Login")
         {
           int UserId = Convert.ToInt32(user.Claims.FirstOrDefault(c => c.Type == "UserId").Value);
-          NotesDB notesDB = await _notesBusiness.UpdateNotes(requestedNotes, noteid, UserId);
+          NoteResponseModel noteResponseModel = await _notesBusiness.UpdateNotes(requestedNotes, noteid, UserId);
           if (requestedNotes != null)
           {
             status = true;
             message = "Notes are Updated";
-            return Ok(new { status, message, requestedNotes });
+            return Ok(new { status, message, requestedNotes});
           }
           else
           {
@@ -124,12 +124,12 @@ namespace FundooNotes.Controllers
         if (user.Claims.FirstOrDefault(c => c.Type == "Typetoken").Value == "Login")
         {
           int userId = Convert.ToInt32(user.Claims.FirstOrDefault(c => c.Type == "UserId").Value);
-          NotesDB notesDB = _notesBusiness.GetNotesByNoteId(noteid, userId);
-          if (notesDB != null)
+          NoteResponseModel noteResponseModel = _notesBusiness.GetNotesByNoteId(noteid, userId);
+          if (noteResponseModel != null)
           {
             status = true;
             message = "Notes all data";
-            return Ok(new { status, message, notesDB });
+            return Ok(new { status, message, noteResponseModel });
           }
           else
           {
@@ -205,7 +205,7 @@ namespace FundooNotes.Controllers
     [Route("Trashed")]
     public IActionResult GetTrashedList()
     {
-      List<NotesDB> notesDBs = new List<NotesDB>();
+      List<NoteResponseModel> notesDBs = new List<NoteResponseModel>();
       bool status;
       string message;
       var user = HttpContext.User;
@@ -266,7 +266,7 @@ namespace FundooNotes.Controllers
     [Route("Archive")]
     public IActionResult GetArchiveList()
     {
-      List<NotesDB> notesDBs = new List<NotesDB>();
+      List<NoteResponseModel> notesDBs = new List<NoteResponseModel>();
       bool status;
       string message;
       var user = HttpContext.User;
@@ -327,7 +327,7 @@ namespace FundooNotes.Controllers
     [Route("Pinned")]
     public IActionResult GetPinnedList()
     {
-      List<NotesDB> notesDBs = new List<NotesDB>();
+      List<NoteResponseModel> notesDBs = new List<NoteResponseModel>();
       bool status;
       string message;
       var user = HttpContext.User;

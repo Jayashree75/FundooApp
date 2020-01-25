@@ -18,7 +18,7 @@ namespace FundooBusinessLayer.Interfaces
     /// </summary>
     public interface IUserBusiness
   {
-    Task<UserDetails> Register(Registratin registratin);
+    Task<ResponseModel> Register(Registratin registratin);
     ResponseModel Login(Login login);
     ResponseModel ForgetPassword(ForgetPassword forgetPassword);
     Task<bool> ResetPassword(ResetPassword resetPassword,int userid);

@@ -18,7 +18,7 @@ namespace FundooRepositoryLayer.Services
       _userContext = userContext;
     }
 
-    public async Task<LabelModel> AddLabels(RequestedLabel requestedLabel,int userid)
+    public async Task<LabelResponseModel> AddLabels(RequestedLabel requestedLabel,int userid)
     {
       LabelModel label = new LabelModel
       {
@@ -27,9 +27,16 @@ namespace FundooRepositoryLayer.Services
         IsModified = DateTime.Now,
         UserId = userid
       };
+      LabelResponseModel labelResponseModel = new LabelResponseModel()
+      {
+        LabelID = label.LabelID,
+        LabelName = label.LabelName,
+        IsCreated = label.IsCreated,
+        IsModified = label.IsModified
+      };
       _userContext.label.Add(label);
       await _userContext.SaveChangesAsync();
-      return label;
+      return labelResponseModel;
     }
 
    
@@ -49,9 +56,16 @@ namespace FundooRepositoryLayer.Services
       }
     }
 
-    public List<LabelModel> GetLabel(int userid)
+    public List<LabelResponseModel> GetLabel(int userid)
     {
-      List<LabelModel> labelModels = _userContext.label.Where(a => a.UserId == userid).ToList();
+      List<LabelResponseModel> labelModels = _userContext.label.Where(a => a.UserId == userid)
+        .Select(a=>new LabelResponseModel
+        {
+         LabelID=a.LabelID,
+         LabelName=a.LabelName,
+         IsCreated=a.IsCreated,
+         IsModified=a.IsModified
+        }).ToList();
       if (labelModels != null)
       {
         return labelModels;

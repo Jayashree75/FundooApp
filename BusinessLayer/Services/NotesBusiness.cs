@@ -52,7 +52,7 @@
       }
     }
 
-    public List<NotesDB> GetAllArchive(int userid)
+    public List<NoteResponseModel> GetAllArchive(int userid)
     {
       if(userid!=0)
       {
@@ -64,7 +64,7 @@
       }
     }
 
-    public List<NotesDB> GetAllPinned(int userid)
+    public List<NoteResponseModel> GetAllPinned(int userid)
     {
       if (userid != 0)
       {
@@ -76,7 +76,7 @@
       }
     }
 
-    public List<NotesDB> GetAllTrashed(int userid)
+    public List<NoteResponseModel> GetAllTrashed(int userid)
     {
       if (userid != 0)
       {
@@ -100,7 +100,7 @@
       }
     }
 
-    public NotesDB GetNotesByNoteId(int noteid,int userid)
+    public NoteResponseModel GetNotesByNoteId(int noteid,int userid)
     {
       if(noteid!=0 && userid!=0)
       {
@@ -136,7 +136,7 @@
       }
     }
 
-    public async Task<NotesDB> UpdateNotes(RequestedNotes requestedNotes,int noteid,int userid)
+    public async Task<NoteResponseModel> UpdateNotes(RequestedNotes requestedNotes,int noteid,int userid)
     {
       if(requestedNotes != null)
       {

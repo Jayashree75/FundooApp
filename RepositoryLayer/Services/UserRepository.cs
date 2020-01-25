@@ -105,7 +105,7 @@ namespace FundooRepositoryLayer.Services
     /// </summary>
     /// <param name="userDetails">The user details.</param>
     /// <returns>returns userdetails</returns>
-    public async Task<UserDetails> Register(Registratin registratin)
+    public async Task<ResponseModel> Register(Registratin registratin)
     {
       try
       {
@@ -123,7 +123,19 @@ namespace FundooRepositoryLayer.Services
         };
         _userContext.Users.Add(model);
         await _userContext.SaveChangesAsync();
-        return model;
+
+        ResponseModel responseModel = new ResponseModel()
+        {
+          UserId=model.UserId,
+          FirstName=model.FirstName,
+          LastName=model.LastName,
+          Email=model.Email,
+          Type=model.Type,
+          IsActive=model.IsActive,
+          IsCreated=model.IsCreated,
+          IsModified=model.IsModified
+        };
+        return responseModel;
       }
       catch (Exception e)
       {

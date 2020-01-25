@@ -18,7 +18,7 @@ namespace FundooRepositoryLayer.Interfaces
     /// </summary>
     public interface IUserRepository
   {
-    Task<UserDetails> Register(Registratin registratin);
+    Task<ResponseModel> Register(Registratin registratin);
     ResponseModel Login(Login login);
     ResponseModel ForgetPassword(ForgetPassword forgetPassword);
     Task<bool> ResetPassword(ResetPassword resetPassword,int userid);

@@ -54,7 +54,7 @@ namespace FundooNotes.Controllers
         {
           var sucess = true;
           var message = "Registration successful";
-          return Ok(new { sucess, message });
+          return Ok(new { sucess, message,result});
         }
         else
         {

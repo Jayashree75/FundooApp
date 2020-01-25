@@ -82,19 +82,26 @@
 
     }
 
-    public NotesDB GetNotesByNoteId(int noteid, int userid)
+    public NoteResponseModel GetNotesByNoteId(int noteid, int userid)
     {
-      NotesDB notes = _userContext.Notes.FirstOrDefault(c => (c.NoteID == noteid) && (c.UserId == userid));
-      if (notes != null)
-      {
-        return notes;
-      }
-      else
-      {
-        return null;
-      }
+
+      NoteResponseModel noteResponse = _userContext.Notes.Where(c => (c.NoteID == noteid) && (c.UserId == userid)).
+        Select(c => new NoteResponseModel
+        {
+          NoteID = c.NoteID,
+          Title = c.Title,
+          Description = c.Description,
+          Reminder = c.Reminder,
+          Image = c.Image,
+          IsArchive = c.IsArchive,
+          IsPin = c.IsPin,
+          IsTrash = c.IsTrash,
+          IsCreated = c.IsCreated,
+          IsModified = c.IsModified
+        }).FirstOrDefault();
+      return noteResponse;
     }
-    public async Task<NotesDB> UpdateNotes(RequestedNotes requestedNotes, int noteid, int userid)
+    public async Task<NoteResponseModel> UpdateNotes(RequestedNotes requestedNotes, int noteid, int userid)
     {
       var notes = _userContext.Notes.FirstOrDefault(c => (c.UserId == userid) && (c.NoteID == noteid));
       NotesDB notesDB = new NotesDB();
@@ -109,12 +116,22 @@
         var note = this._userContext.Notes.Attach(notes);
         note.State = Microsoft.EntityFrameworkCore.EntityState.Modified;
         await this._userContext.SaveChangesAsync();
-        return notes;
       }
-      else
+      NoteResponseModel responseModel = new NoteResponseModel()
       {
-        return null;
-      }
+        NoteID = noteid,
+        Title = notesDB.Title,
+        Description = notesDB.Description,
+        Reminder = notesDB.Reminder,
+        Image = notesDB.Image,
+        Color = notesDB.Color,
+        IsCreated = notesDB.IsCreated,
+        IsModified = notesDB.IsModified,
+        IsPin = notesDB.IsPin,
+        IsArchive = notesDB.IsArchive,
+        IsTrash = notesDB.IsTrash
+      };
+      return responseModel;
     }
 
     public async Task<bool> Pinned(int userid, int noteid)
@@ -143,12 +160,26 @@
       return flag;
     }
 
-    public List<NotesDB> GetAllPinned(int userid)
+    public List<NoteResponseModel> GetAllPinned(int userid)
     {
-      List<NotesDB> notesDBs = _userContext.Notes.Where(a => (a.UserId == userid) && (a.IsTrash == false) && (a.IsArchive == false) && (a.IsPin == true)).ToList();
-      if (notesDBs.Count != 0)
+      List<NoteResponseModel> notesresponse = _userContext.Notes.Where(a => (a.UserId == userid) && (a.IsTrash == false) && (a.IsArchive == false) && (a.IsPin == true)).
+        Select(a => new NoteResponseModel
+        {
+          NoteID = a.NoteID,
+          Title = a.Title,
+          Description = a.Description,
+          Reminder = a.Reminder,
+          Image = a.Image,
+          IsArchive = a.IsArchive,
+          IsPin = a.IsPin,
+          IsTrash = a.IsTrash,
+          IsCreated = a.IsCreated,
+          IsModified = a.IsModified
+        }).ToList();
+
+      if (notesresponse.Count != 0)
       {
-        return notesDBs;
+        return notesresponse;
       }
       else
       {
@@ -182,9 +213,22 @@
       return flag;
     }
 
-    public List<NotesDB> GetAllTrashed(int userid)
+    public List<NoteResponseModel> GetAllTrashed(int userid)
     {
-      List<NotesDB> notesDBs = _userContext.Notes.Where(a => (a.UserId == userid) && (a.IsTrash == true) && (a.IsArchive == false) && (a.IsPin == false)).ToList();
+      List<NoteResponseModel> notesDBs = _userContext.Notes.Where(a => (a.UserId == userid) && (a.IsTrash == true) && (a.IsArchive == false) && (a.IsPin == false)).
+        Select(a => new NoteResponseModel
+        {
+          NoteID = a.NoteID,
+          Title = a.Title,
+          Description = a.Description,
+          Reminder = a.Reminder,
+          Image = a.Image,
+          IsArchive = a.IsArchive,
+          IsPin = a.IsPin,
+          IsTrash = a.IsTrash,
+          IsCreated = a.IsCreated,
+          IsModified = a.IsModified
+        }).ToList();
       if (notesDBs.Count != 0)
       {
         return notesDBs;
@@ -221,9 +265,22 @@
       return flag;
     }
 
-    public List<NotesDB> GetAllArchive(int userid)
+    public List<NoteResponseModel> GetAllArchive(int userid)
     {
-      List<NotesDB> notesDBs = _userContext.Notes.Where(a => (a.UserId == userid) && (a.IsTrash == false) && (a.IsArchive == true) && (a.IsPin == false)).ToList();
+      List<NoteResponseModel> notesDBs = _userContext.Notes.Where(a => (a.UserId == userid) && (a.IsTrash == false) && (a.IsArchive == true) && (a.IsPin == false))
+                .Select(a => new NoteResponseModel
+                {
+                  NoteID = a.NoteID,
+                  Title = a.Title,
+                  Description = a.Description,
+                  Reminder = a.Reminder,
+                  Image = a.Image,
+                  IsArchive = a.IsArchive,
+                  IsPin = a.IsPin,
+                  IsTrash = a.IsTrash,
+                  IsCreated = a.IsCreated,
+                  IsModified = a.IsModified
+                }).ToList();
       if (notesDBs.Count != 0)
       {
         return notesDBs;

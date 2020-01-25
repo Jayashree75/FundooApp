@@ -9,10 +9,10 @@
 
     public interface ILabelBusiness
   {
-    Task<LabelModel> AddLabels(RequestedLabel requestedLabel, int userid);
+    Task<LabelResponseModel> AddLabels(RequestedLabel requestedLabel, int userid);
     Task<LabelModel> UpdateLabels(RequestedLabel requestedLabel, int userid, int labelid);
     Task<bool> DeleteLabel(int labelid);
-    List<LabelModel> GetLabel(int userid);
+    List<LabelResponseModel> GetLabel(int userid);
 
   }
 }

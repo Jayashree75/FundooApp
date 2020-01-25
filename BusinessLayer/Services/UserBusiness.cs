@@ -83,7 +83,7 @@ namespace FundooBusinessLayer.Services
     /// </summary>
     /// <param name="userDetails"></param>
     /// <returns></returns>
-    public async Task<UserDetails> Register(Registratin registratin)
+    public async Task<ResponseModel> Register(Registratin registratin)
     {
       try
       {
