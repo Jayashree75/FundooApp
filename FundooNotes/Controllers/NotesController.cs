@@ -34,8 +34,8 @@ namespace FundooNotes.Controllers
       {
         if (user.Claims.FirstOrDefault(c => c.Type == "Typetoken").Value == "Login")
         {
-           int UserId = Convert.ToInt32(user.Claims.FirstOrDefault(c => c.Type == "UserId").Value);
-          notesDB = await _notesBusiness.AddNotes(requestedNotes,UserId);
+          int UserId = Convert.ToInt32(user.Claims.FirstOrDefault(c => c.Type == "UserId").Value);
+          notesDB = await _notesBusiness.AddNotes(requestedNotes, UserId);
           if (notesDB != null)
           {
             status = true;
@@ -69,7 +69,7 @@ namespace FundooNotes.Controllers
           {
             status = true;
             message = "Notes are Updated";
-            return Ok(new { status, message, requestedNotes});
+            return Ok(new { status, message, requestedNotes });
           }
           else
           {
@@ -113,7 +113,7 @@ namespace FundooNotes.Controllers
     }
 
     [HttpGet]
-    [Route("{noteid}")]
+    [Route("noteid")]
     public IActionResult GetNotesByNotesId(int noteid)
     {
       bool status;
@@ -142,6 +142,38 @@ namespace FundooNotes.Controllers
       return BadRequest("used invalid token");
     }
 
+    [HttpGet]
+    [Route("labelid")]
+    public IActionResult GetNotesByLabelId(int labelid)
+    {
+      List<NoteResponseModel> noteResponseModels = new List<NoteResponseModel>();
+      bool status;
+      string message;
+      var user = HttpContext.User;
+      if (user.HasClaim(c => c.Type == "Typetoken"))
+      {
+        if (user.Claims.FirstOrDefault(c => c.Type == "Typetoken").Value == "Login")
+        {
+          int userId = Convert.ToInt32(user.Claims.FirstOrDefault(c => c.Type == "UserId").Value);
+          noteResponseModels = _notesBusiness.GetNoteByLabelId(labelid);
+          if (noteResponseModels != null)
+          {
+            status = true;
+            message = "Notes all data by label id";
+            return Ok(new { status, message, noteResponseModels });
+          }
+          else
+          {
+            status = false;
+            message = "label is not present";
+            return NotFound(new { status, message });
+          }
+        }
+      }
+      return BadRequest("used invalid token");
+    }
+
+  
     [HttpDelete("{noteid}")]
     public async Task<IActionResult> DeleteNotes(int noteid)
     {
@@ -183,7 +215,7 @@ namespace FundooNotes.Controllers
         if (user.Claims.FirstOrDefault(c => c.Type == "Typetoken").Value == "Login")
         {
           int UserId = Convert.ToInt32(user.Claims.FirstOrDefault(c => c.Type == "UserId").Value);
-          bool result =await _notesBusiness.Trash(UserId, noteid);
+          bool result = await _notesBusiness.Trash(UserId, noteid);
           if (result)
           {
             status = true;
@@ -295,7 +327,7 @@ namespace FundooNotes.Controllers
 
     [HttpPost]
     [Route("Pinned/{noteid}")]
-    public async Task<IActionResult> PinnedNotes( int noteid)
+    public async Task<IActionResult> PinnedNotes(int noteid)
     {
       bool status;
       string message;
@@ -352,6 +384,6 @@ namespace FundooNotes.Controllers
         }
       }
       return BadRequest("used invalid token");
-    }    
+    }
   }
 }
