@@ -11,16 +11,40 @@ namespace FundooBusinessLayer.Interfaces
   using System;
   using System.Collections.Generic;
   using System.Text;
-    using System.Threading.Tasks;
+  using System.Threading.Tasks;
+
+  /// <summary>
+  /// this is an interface of BusinessLayer.
+  /// </summary>
+  public interface IUserBusiness
+  {
+    /// <summary>
+    /// Registers the specified registratin.
+    /// </summary>
+    /// <param name="registratin">The registratin.</param>
+    /// <returns></returns>
+    Task<ResponseModel> Register(Registratin registratin);
 
     /// <summary>
-    /// this is an interface of BusinessLayer.
+    /// Logins the specified login.
     /// </summary>
-    public interface IUserBusiness
-  {
-    Task<ResponseModel> Register(Registratin registratin);
+    /// <param name="login">The login.</param>
+    /// <returns></returns>
     ResponseModel Login(Login login);
+
+    /// <summary>
+    /// Forgets the password.
+    /// </summary>
+    /// <param name="forgetPassword">The forget password.</param>
+    /// <returns></returns>
     ResponseModel ForgetPassword(ForgetPassword forgetPassword);
-    Task<bool> ResetPassword(ResetPassword resetPassword,int userid);
+
+    /// <summary>
+    /// Resets the password.
+    /// </summary>
+    /// <param name="resetPassword">The reset password.</param>
+    /// <param name="userid">The userid.</param>
+    /// <returns></returns>
+    Task<bool> ResetPassword(ResetPassword resetPassword, int userid);
   }
 }

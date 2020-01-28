@@ -1,10 +1,11 @@
-﻿using Experimental.System.Messaging;
+﻿namespace MSMQListener
+{
+using Experimental.System.Messaging;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace MSMQListener
-{
+
   public delegate void MessageReceivedEventHandler(object sender, MessageEventArgs args);
   public class MSMQListener
   {

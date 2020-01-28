@@ -15,6 +15,7 @@ namespace FundooRepositoryLayer.Services
   using System.Linq;
   using System.Text;
     using System.Threading.Tasks;
+    using Xunit.Sdk;
 
     /// <summary>
     /// This is the class of UserRepository.
@@ -105,10 +106,12 @@ namespace FundooRepositoryLayer.Services
     /// </summary>
     /// <param name="userDetails">The user details.</param>
     /// <returns>returns userdetails</returns>
+
     public async Task<ResponseModel> Register(Registratin registratin)
     {
       try
       {
+
         registratin.Password = EncodeDecode.EncodePassword(registratin.Password);
         var model = new UserDetails()
         {

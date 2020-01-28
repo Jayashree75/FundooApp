@@ -13,11 +13,12 @@ namespace FundooBusinessLayer.Services
   using FundooRepositoryLayer.Services;
   using System;
   using System.Threading.Tasks;
+    using Xunit.Sdk;
 
-  /// <summary>
-  /// This is the class of UserBusiness.
-  /// </summary>
-  public class UserBusiness : IUserBusiness
+    /// <summary>
+    /// This is the class of UserBusiness.
+    /// </summary>
+    public class UserBusiness : IUserBusiness
   {
     private readonly IUserRepository _userRepository;
     /// <summary>
@@ -83,6 +84,7 @@ namespace FundooBusinessLayer.Services
     /// </summary>
     /// <param name="userDetails"></param>
     /// <returns></returns>
+
     public async Task<ResponseModel> Register(Registratin registratin)
     {
       try

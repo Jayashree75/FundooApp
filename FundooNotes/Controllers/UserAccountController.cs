@@ -10,8 +10,8 @@ namespace FundooNotes.Controllers
   using System.Linq;
   using System.Security.Claims;
   using System.Text;
-    using System.Threading.Tasks;
-    using CommonLayer.Model;
+  using System.Threading.Tasks;
+  using CommonLayer.Model;
   using FundooBusinessLayer.Interfaces;
   using FundooCommonLayer.Model;
   using FundooCommonLayer.ModelRequest;
@@ -30,7 +30,7 @@ namespace FundooNotes.Controllers
   public class UserAccountController : ControllerBase
   {
     private readonly IUserBusiness _userBusiness;
-    private IConfiguration _config;
+    private  IConfiguration _config;
 
     public UserAccountController(IUserBusiness userBusiness, IConfiguration config)
     {
@@ -49,12 +49,12 @@ namespace FundooNotes.Controllers
     {
       try
       {
-        var result =await _userBusiness.Register(registratin);
+        var result = await _userBusiness.Register(registratin);
         if (result != null)
         {
           var sucess = true;
           var message = "Registration successful";
-          return Ok(new { sucess, message,result});
+          return Ok(new { sucess, message, result });
         }
         else
         {
@@ -110,20 +110,27 @@ namespace FundooNotes.Controllers
     [Route("ForgetPassword")]
     public IActionResult ForgetPassword(ForgetPassword forgetPassword)
     {
-      ResponseModel data = _userBusiness.ForgetPassword(forgetPassword);
-      if (data != null)
+      try
       {
-        var token = GenerateJSONWebToken(data, "ForgetPassword");
-        var success = true;
-        var message = "Email Verified";
-        Send.SendMSMQ(token,forgetPassword.Email);
-        return Ok(new { success, message, token });
+        ResponseModel data = _userBusiness.ForgetPassword(forgetPassword);
+        if (data != null)
+        {
+          var token = GenerateJSONWebToken(data, "ForgetPassword");
+          var success = true;
+          var message = "Email Verified";
+          Send.SendMSMQ(token, forgetPassword.Email);
+          return Ok(new { success, message, token });
+        }
+        else
+        {
+          var success = false;
+          var message = "Email not matched";
+          return Ok(new { success, message });
+        }
       }
-      else
+      catch (Exception e)
       {
-        var success = false;
-        var message = "Email not matched";
-        return Ok(new { success, message });
+        throw new Exception(e.Message);
       }
     }
 
@@ -147,7 +154,7 @@ namespace FundooNotes.Controllers
           if (user.Claims.FirstOrDefault(c => c.Type == "Typetoken").Value == "ForgetPassword")
           {
             int UserId = Convert.ToInt32(user.Claims.FirstOrDefault(c => c.Type == "UserId").Value);
-            status =await _userBusiness.ResetPassword(resetPassword, UserId);
+            status = await _userBusiness.ResetPassword(resetPassword, UserId);
             if (status)
             {
               status = true;

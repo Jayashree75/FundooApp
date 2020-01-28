@@ -1,7 +1,9 @@
 ﻿namespace FundooCommonLayer.Model
 {
-  using System;
-  using System.ComponentModel;
+    using FundooCommonLayer.ModelRequest;
+    using System;
+    using System.Collections.Generic;
+    using System.ComponentModel;
   using System.ComponentModel.DataAnnotations;
   using System.ComponentModel.DataAnnotations.Schema;
 

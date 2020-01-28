@@ -5,7 +5,8 @@
 //-----------------------------------------------------------------------
 namespace FundooCommonLayer.Model
 {
-using System;
+    using FundooCommonLayer.ModelRequest;
+    using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -36,6 +37,7 @@ using System.Text;
     public string Color { get; set; }
     public DateTime IsCreated { get; set; }
     public DateTime IsModified { get; set; }
+    public List<LabelResponseModel> labels { get; set; }
   }
   public class LabelResponseModel
   {
