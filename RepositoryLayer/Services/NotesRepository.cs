@@ -31,7 +31,7 @@ namespace FundooRepositoryLayer.Services
     /// <param name="requestedNotes"></param>
     /// <param name="userid"></param>
     /// <returns></returns>
-    public async Task<NoteResponseModel> AddNotes(RequestedNotes requestedNotes, int userid)
+    public async Task<NoteResponseModel> AddNotes(RequestedNotesUpdate requestedNotes, int userid)
     {
       try
       {
@@ -53,7 +53,8 @@ namespace FundooRepositoryLayer.Services
           List<RequestNotesLabel> noteslabels = requestedNotes.labels;
           foreach (RequestNotesLabel notesLabel in noteslabels)
           {
-            if (notesLabel.LabelID > 0)
+            LabelModel labelModel = _userContext.label.FirstOrDefault(linq => linq.UserId == userid && linq.LabelID==notesLabel.LabelID);
+            if (notesLabel.LabelID > 0 && labelModel!=null)
             {
               var data = new Noteslabel()
               {
@@ -109,7 +110,7 @@ namespace FundooRepositoryLayer.Services
     {
       try
       {
-        NotesDB notes = _userContext.Notes.FirstOrDefault(c => c.NoteID == noteid);
+        NotesDB notes = _userContext.Notes.FirstOrDefault(note => note.NoteID == noteid);
         if (notes != null)
         {
           if (notes.IsTrash == true)
@@ -144,23 +145,20 @@ namespace FundooRepositoryLayer.Services
 
       try
       {
-        List<NoteResponseModel> notesDBs = _userContext.Notes.Where(a => a.UserId == userid).
-                                                 Select(a => new NoteResponseModel
+        List<NoteResponseModel> notesDBs = _userContext.Notes.Where(note => note.UserId == userid).
+                                                 Select(note => new NoteResponseModel
                                                  {
-                                                   NoteID = a.NoteID,
-                                                   Title = a.Title,
-                                                   Description = a.Description,
-                                                   Reminder = a.Reminder,
-                                                   Image = a.Image,
-                                                   IsArchive = a.IsArchive,
-                                                   IsPin = a.IsPin,
-                                                   IsTrash = a.IsTrash,
-                                                   IsCreated = a.IsCreated,
-                                                   IsModified = a.IsModified
-
-                                                 }).ToList();
-
-
+                                                   NoteID = note.NoteID,
+                                                   Title = note.Title,
+                                                   Description = note.Description,
+                                                   Reminder = note.Reminder,
+                                                   Image = note.Image,
+                                                   IsArchive = note.IsArchive,
+                                                   IsPin = note.IsPin,
+                                                   IsTrash = note.IsTrash,
+                                                   IsCreated = note.IsCreated,
+                                                   IsModified = note.IsModified
+                                                 }).ToList();                                                                                                                                                                                                                                 
         if (notesDBs != null && notesDBs.Count != 0)
         {
           foreach (NoteResponseModel noteResponse in notesDBs)
@@ -168,16 +166,15 @@ namespace FundooRepositoryLayer.Services
             List<LabelResponseModel> labelResponseModels = _userContext.Noteslabels.
                                                 Where(notes => notes.NoteID == noteResponse.NoteID).
                                                 Join(_userContext.label,
+                                                noteslabel => noteslabel.LabelID,
                                                 label => label.LabelID,
-                                                note => note.LabelID,
-                                                (label, note) => new LabelResponseModel
+                                                (noteslabel, label) => new LabelResponseModel
                                                 {
-                                                  LabelID = label.LabelID,
-                                                  LabelName = note.LabelName,
-                                                  IsCreated = note.IsCreated,
-                                                  IsModified = note.IsModified
+                                                  LabelID = noteslabel.LabelID,
+                                                  LabelName = label.LabelName,
+                                                  IsCreated = label.IsCreated,
+                                                  IsModified = label.IsModified
                                                 }).ToList();
-
             noteResponse.labels = labelResponseModels;
           }
         }
@@ -245,7 +242,7 @@ namespace FundooRepositoryLayer.Services
     /// <param name="noteid"></param>
     /// <param name="userid"></param>
     /// <returns></returns>
-    public async Task<NoteResponseModel> UpdateNotes(RequestedNotes requestedNotes, int noteid, int userid)
+    public async Task<NoteResponseModel> UpdateNotes(RequestNotes request, int noteid, int userid)
     {
       try
       {
@@ -253,12 +250,12 @@ namespace FundooRepositoryLayer.Services
         NotesDB notesDB = new NotesDB();
         if (notes != null)
         {
-          notes.Title = requestedNotes.Title;
-          notes.Description = requestedNotes.Description;
+          notes.Title = request.Title;
+          notes.Description = request.Description;
           notes.IsModified = DateTime.Now;
           notes.Reminder = DateTime.Now;
-          notes.Color = requestedNotes.Color;
-          notes.Image = requestedNotes.Image;
+          notes.Color = request.Color;
+          notes.Image = request.Image;
           var note = this._userContext.Notes.Attach(notes);
           note.State = Microsoft.EntityFrameworkCore.EntityState.Modified;
           await this._userContext.SaveChangesAsync();

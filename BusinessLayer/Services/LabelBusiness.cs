@@ -33,9 +33,9 @@
       try
       {
         if (requestedLabel != null || userid <= 0)
-          return null;
-        else
           return await _labelRepository.AddLabels(requestedLabel, userid);
+        else
+          return null;
       }
       catch (Exception e)
       {

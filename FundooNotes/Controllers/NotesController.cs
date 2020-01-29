@@ -39,7 +39,7 @@ using Microsoft.AspNetCore.Mvc;
     /// <returns></returns>
     /// <exception cref="Exception"></exception>
     [HttpPost]
-    public async Task<IActionResult> AddNotes([FromBody] RequestedNotes requestedNotes)
+    public async Task<IActionResult> AddNotes([FromBody] RequestedNotesUpdate requestedNotes)
     {
       try
       {
@@ -83,8 +83,8 @@ using Microsoft.AspNetCore.Mvc;
     /// <returns></returns>
     /// <exception cref="Exception"></exception>
     [HttpPut]
-    [Route("{noteid}")]
-    public async Task<IActionResult> UpdateNotes([FromBody] RequestedNotes requestedNotes, int noteid)
+    [Route("noteid")]
+    public async Task<IActionResult> UpdateNotes([FromBody] RequestNotes requestedNotes, int noteid)
     {
       try
       {

@@ -23,7 +23,7 @@ namespace FundooRepositoryLayer.Interfaces
     /// <param name="requestedNotes">The requested notes.</param>
     /// <param name="userid">The userid.</param>
     /// <returns></returns>
-    Task<NoteResponseModel> AddNotes(RequestedNotes requestedNotes, int userid);
+    Task<NoteResponseModel> AddNotes(RequestedNotesUpdate requestedNotes, int userid);
 
     /// <summary>
     /// Gets the notes.
@@ -39,7 +39,7 @@ namespace FundooRepositoryLayer.Interfaces
     /// <param name="noteid">The noteid.</param>
     /// <param name="userid">The userid.</param>
     /// <returns></returns>
-    Task<NoteResponseModel> UpdateNotes(RequestedNotes requestedNotes, int noteid, int userid);
+    Task<NoteResponseModel> UpdateNotes(RequestNotes requestedNotes, int noteid, int userid);
 
     /// <summary>
     /// Deletes the notes.

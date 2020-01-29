@@ -111,7 +111,6 @@ namespace FundooRepositoryLayer.Services
     {
       try
       {
-
         registratin.Password = EncodeDecode.EncodePassword(registratin.Password);
         var model = new UserDetails()
         {

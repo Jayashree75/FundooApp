@@ -31,7 +31,7 @@
     /// Notes Detail is Empty
     /// or
     /// </exception>
-    public async Task<NoteResponseModel> AddNotes(RequestedNotes requestedNotes, int userid)
+    public async Task<NoteResponseModel> AddNotes(RequestedNotesUpdate requestedNotes, int userid)
     {
       try
       {
@@ -312,7 +312,7 @@
     /// <param name="userid">The userid.</param>
     /// <returns></returns>
     /// <exception cref="Exception"></exception>
-    public async Task<NoteResponseModel> UpdateNotes(RequestedNotes requestedNotes, int noteid, int userid)
+    public async Task<NoteResponseModel> UpdateNotes(RequestNotes requestedNotes, int noteid, int userid)
     {
       try
       {

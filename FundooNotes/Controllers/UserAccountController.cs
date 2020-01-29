@@ -112,6 +112,10 @@ namespace FundooNotes.Controllers
     {
       try
       {
+        if (forgetPassword == null || string.IsNullOrWhiteSpace(forgetPassword.Email) || !forgetPassword.Email.Contains('@') || !forgetPassword.Email.Contains('.'))
+        {
+          return BadRequest(new { Message ="Please Provide the Data Properly." });
+        }
         ResponseModel data = _userBusiness.ForgetPassword(forgetPassword);
         if (data != null)
         {
@@ -125,12 +129,12 @@ namespace FundooNotes.Controllers
         {
           var success = false;
           var message = "Email not matched";
-          return Ok(new { success, message });
+          return NotFound(new { success, message });
         }
       }
       catch (Exception e)
       {
-        throw new Exception(e.Message);
+        return BadRequest(new { e.Message });
       }
     }
 
@@ -193,7 +197,7 @@ namespace FundooNotes.Controllers
         var token = new JwtSecurityToken(_config["Jwt:Issuer"],
           _config["Jwt:Issuer"],
           claims,
-          expires: DateTime.Now.AddMinutes(30),
+          expires: DateTime.Now.AddDays(1),
           signingCredentials: credentials);
         return new JwtSecurityTokenHandler().WriteToken(token);
       }
