@@ -114,5 +114,8 @@ namespace FundooRepositoryLayer.Interfaces
     /// <param name="userid">The userid.</param>
     /// <returns></returns>
     bool DeleteAllTrash(int userid);
+    NoteResponseModel ColorChange(int noteid, RequestColour requestColour, int userid);
+    string AddImage(int userid, int noteid, ImageUpload imageModel);
+    List<NoteResponseModel> RemainderList(int Userid);
   }
 }

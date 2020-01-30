@@ -114,5 +114,15 @@ namespace FundooBusinessLayer.Interfaces
     /// <param name="userid">The userid.</param>
     /// <returns></returns>
     bool DeleteAllTrash(int userid);
+    /// <summary>
+    /// Colors the change.
+    /// </summary>
+    /// <param name="noteid">The noteid.</param>
+    /// <param name="requestColour">The request colour.</param>
+    /// <param name="userid">The userid.</param>
+    /// <returns></returns>
+    NoteResponseModel ColorChange(int noteid, RequestColour requestColour, int userid);
+    string AddImage(int noteid, int userid, ImageUpload image);
+    List<NoteResponseModel> RemainderList(int Userid);
   }
 }

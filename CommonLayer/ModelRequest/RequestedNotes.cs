@@ -12,7 +12,7 @@
   {
     public string Title { get; set; }
     public string Description { get; set; }
-    public DateTime Reminder { get; set; }
+    public DateTime? Reminder { get; set; }
     public string Image { get; set; }
     [DefaultValue(false)]
     public bool IsArchive { get; set; }
@@ -27,7 +27,7 @@
   {
     public string Title { get; set; }
     public string Description { get; set; }
-    public DateTime Reminder { get; set; }
+    public DateTime? Reminder { get; set; }
     public string Image { get; set; }
     [DefaultValue(false)]
     public bool IsArchive { get; set; }
@@ -45,5 +45,14 @@
   public class TrashValue
   {
     public bool Value { get; set; }
+  }
+  public class RequestColour
+  {
+    [RegularExpression("^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$")]
+    public string Color { get; set; }
+  }
+  public class ImageUpload
+  {
+    public string Image { get; set; }
   }
 }

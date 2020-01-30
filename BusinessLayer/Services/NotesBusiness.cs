@@ -355,5 +355,59 @@
         throw new Exception(e.Message);
       }
     }
+    /// <summary>
+    /// Colors the change.
+    /// </summary>
+    /// <param name="noteid">The noteid.</param>
+    /// <param name="requestColour">The request colour.</param>
+    /// <param name="userid">The userid.</param>
+    /// <returns></returns>
+    public NoteResponseModel ColorChange(int noteid, RequestColour requestColour, int userid)
+    {
+      if (requestColour != null)
+      {
+        return _notesRepository.ColorChange(noteid, requestColour, userid);
+      }
+      else
+      {
+        return null;
+      }
+    }
+
+    /// <summary>
+    /// Add the image.
+    /// </summary>
+    /// <param name="noteid">The noteid.</param>
+    /// <param name="userid">The userid.</param>
+    /// <param name="image">The image.</param>
+    /// <returns></returns>
+    public string AddImage(int noteid, int userid, ImageUpload image)
+    {
+      if (image != null)
+      {
+        return _notesRepository.AddImage(noteid, userid, image);
+      }
+      else
+      {
+        return null;
+      }
+    }
+
+    /// <summary>
+    /// get the Remainder list.
+    /// </summary>
+    /// <param name="Userid">The userid.</param>
+    /// <returns></returns>
+    public List<NoteResponseModel> RemainderList(int Userid)
+    {
+      if (Userid != 0)
+      {
+        return _notesRepository.RemainderList(Userid);
+      }
+      else
+      {
+        return null;
+      }
+    }
   }
 }

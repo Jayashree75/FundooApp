@@ -5,16 +5,16 @@
 //-----------------------------------------------------------------------
 namespace FundooNotes.Controllers
 {
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using FundooBusinessLayer.Interfaces;
-using FundooCommonLayer.Model;
-using FundooCommonLayer.ModelRequest;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+  using System;
+  using System.Collections.Generic;
+  using System.Linq;
+  using System.Threading.Tasks;
+  using FundooBusinessLayer.Interfaces;
+  using FundooCommonLayer.Model;
+  using FundooCommonLayer.ModelRequest;
+  using Microsoft.AspNetCore.Authorization;
+  using Microsoft.AspNetCore.Http;
+  using Microsoft.AspNetCore.Mvc;
 
   /// <summary>
   /// This is the notes controller class.
@@ -83,7 +83,7 @@ using Microsoft.AspNetCore.Mvc;
     /// <returns></returns>
     /// <exception cref="Exception"></exception>
     [HttpPut]
-    [Route("noteid")]
+    [Route("{noteid}")]
     public async Task<IActionResult> UpdateNotes([FromBody] RequestNotes requestedNotes, int noteid)
     {
       try
@@ -170,7 +170,7 @@ using Microsoft.AspNetCore.Mvc;
     /// <returns></returns>
     /// <exception cref="Exception"></exception>
     [HttpGet]
-    [Route("noteid")]
+    [Route("{noteid}")]
     public IActionResult GetNotesByNotesId(int noteid)
     {
       try
@@ -215,7 +215,7 @@ using Microsoft.AspNetCore.Mvc;
     /// <returns></returns>
     /// <exception cref="Exception"></exception>
     [HttpGet]
-    [Route("labelid")]
+    [Route("{labelid}/Notes")]
     public IActionResult GetNotesByLabelId(int labelid)
     {
       try
@@ -252,14 +252,13 @@ using Microsoft.AspNetCore.Mvc;
       }
     }
 
-
     /// <summary>
     /// Deletes the notes.
     /// </summary>
     /// <param name="noteid">The noteid.</param>
     /// <returns></returns>
     /// <exception cref="Exception"></exception>
-    [HttpDelete("noteid")]
+    [HttpDelete("{noteid}")]
     public async Task<IActionResult> DeleteNotes(int noteid)
     {
       try
@@ -294,7 +293,6 @@ using Microsoft.AspNetCore.Mvc;
         throw new Exception(e.Message);
       }
     }
-
 
     /// <summary>
     /// Trashes the notes.
@@ -345,7 +343,7 @@ using Microsoft.AspNetCore.Mvc;
     /// <returns></returns>
     /// <exception cref="Exception"></exception>
     [HttpGet]
-    [Route("Trashed")]
+    [Route("Trash")]
     public IActionResult GetTrashedList()
     {
       try
@@ -475,7 +473,7 @@ using Microsoft.AspNetCore.Mvc;
     /// <returns></returns>
     /// <exception cref="Exception"></exception>
     [HttpPut]
-    [Route("{noteid}/Pinned")]
+    [Route("{noteid}/Pin")]
     public async Task<IActionResult> PinnedNotes(int noteid)
     {
       try
@@ -517,7 +515,7 @@ using Microsoft.AspNetCore.Mvc;
     /// <returns></returns>
     /// <exception cref="Exception"></exception>
     [HttpGet]
-    [Route("Pinned")]
+    [Route("Pin")]
     public IActionResult GetPinnedList()
     {
       try
@@ -593,6 +591,114 @@ using Microsoft.AspNetCore.Mvc;
       {
         throw new Exception(e.Message);
       }
+    }
+
+    /// <summary>
+    /// Colors the change.
+    /// </summary>
+    /// <param name="requestColour">The request colour.</param>
+    /// <param name="noteid">The noteid.</param>
+    /// <returns></returns>
+    [HttpPut]
+    [Route("{noteid}/Color")]
+    public IActionResult ColorChange(RequestColour requestColour, int noteid)
+    {
+      bool status;
+      string message;
+      var user = HttpContext.User;
+      if (user.HasClaim(c => c.Type == "Typetoken"))
+      {
+        if (user.Claims.FirstOrDefault(c => c.Type == "Typetoken").Value == "Login")
+        {
+          int UserId = Convert.ToInt32(user.Claims.FirstOrDefault(c => c.Type == "UserId").Value);
+          NoteResponseModel result = _notesBusiness.ColorChange(noteid, requestColour, UserId);
+          if (result != null)
+          {
+            status = true;
+            message = "Color Change";
+            return Ok(new { status, message });
+          }
+          else
+          {
+            status = false;
+            message = "Color change failed";
+            return NotFound(new { status, message });
+          }
+        }
+      }
+      return BadRequest("used invalid token");
+    }
+
+    /// <summary>
+    /// Adds the image.
+    /// </summary>
+    /// <param name="noteid">The noteid.</param>
+    /// <param name="image">The image.</param>
+    /// <returns></returns>
+    [HttpPost]
+    [Route("{noteid}/Image")]
+    public IActionResult AddImage(int noteid, ImageUpload image)
+    {
+      bool status;
+      string message;
+      var user = HttpContext.User;
+      NoteResponseModel notesDB = new NoteResponseModel();
+      if (user.HasClaim(c => c.Type == "Typetoken"))
+      {
+        if (user.Claims.FirstOrDefault(c => c.Type == "Typetoken").Value == "Login")
+        {
+          int UserId = Convert.ToInt32(user.Claims.FirstOrDefault(c => c.Type == "UserId").Value);
+          string imageUrl = _notesBusiness.AddImage(noteid, UserId, image);
+          if (imageUrl != null)
+          {
+            status = true;
+            message = "Image added successfully";
+            return Ok(new { status, message, imageUrl });
+          }
+          else
+          {
+            status = false;
+            message = "Image added failed";
+            return NotFound(new { status, message });
+          }
+        }
+      }
+      return BadRequest("used invalid token");
+    }
+
+    /// <summary>
+    /// Reminders the list.
+    /// </summary>
+    /// <returns></returns>
+    [HttpGet]
+    [Route("Remainder")]
+    public IActionResult ReminderList()
+    {
+      bool status;
+      string message;
+      var user = HttpContext.User;
+      List<NoteResponseModel> notesDBs = new List<NoteResponseModel>();
+      if (user.HasClaim(c => c.Type == "Typetoken"))
+      {
+        if (user.Claims.FirstOrDefault(c => c.Type == "Typetoken").Value == "Login")
+        {
+          int UserId = Convert.ToInt32(user.Claims.FirstOrDefault(c => c.Type == "UserId").Value);
+          notesDBs = _notesBusiness.RemainderList(UserId);
+          if (notesDBs != null)
+          {
+            status = true;
+            message = "Image added successfully";
+            return Ok(new { status, message, notesDBs });
+          }
+          else
+          {
+            status = false;
+            message = "Image added failed";
+            return NotFound(new { status, message });
+          }
+        }
+      }
+      return BadRequest("used invalid token");
     }
   }
 }

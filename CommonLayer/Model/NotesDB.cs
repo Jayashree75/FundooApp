@@ -16,7 +16,7 @@
     public int UserId { get; set; }
     public string Title { get; set; }
     public string Description { get; set; }
-    public DateTime Reminder { get; set; }
+    public DateTime? Reminder { get; set; }
     public string Image { get; set; }
     [DefaultValue(false)]
     public bool IsArchive { get; set; }
