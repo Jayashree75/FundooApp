@@ -14,14 +14,14 @@ namespace FundooRepositoryLayer.Services
   using System.Collections.Generic;
   using System.Linq;
   using System.Text;
-    using System.Threading.Tasks;
-    using Xunit.Sdk;
+  using System.Threading.Tasks;
+  using Xunit.Sdk;
 
-    /// <summary>
-    /// This is the class of UserRepository.
-    /// </summary>
-    /// <seealso cref="FundooRepositoryLayer.Interfaces.IUserRepository" />
-    public class UserRepository : IUserRepository
+  /// <summary>
+  /// This is the class of UserRepository.
+  /// </summary>
+  /// <seealso cref="FundooRepositoryLayer.Interfaces.IUserRepository" />
+  public class UserRepository : IUserRepository
   {
     private readonly UserContext _userContext;
 
@@ -120,22 +120,23 @@ namespace FundooRepositoryLayer.Services
           Password = registratin.Password,
           Type = registratin.Type,
           IsActive = true,
-          IsCreated=DateTime.Now,
-          IsModified=DateTime.Now
+          IsCreated = DateTime.Now,
+          IsModified = DateTime.Now,
+          UserRole = "User"
         };
         _userContext.Users.Add(model);
         await _userContext.SaveChangesAsync();
-
         ResponseModel responseModel = new ResponseModel()
         {
-          UserId=model.UserId,
-          FirstName=model.FirstName,
-          LastName=model.LastName,
-          Email=model.Email,
-          Type=model.Type,
-          IsActive=model.IsActive,
-          IsCreated=model.IsCreated,
-          IsModified=model.IsModified
+          UserId = model.UserId,
+          FirstName = model.FirstName,
+          LastName = model.LastName,
+          Email = model.Email,
+          Type = model.Type,
+          IsActive = model.IsActive,
+          IsCreated = model.IsCreated,
+          IsModified = model.IsModified,
+          UserRole = model.UserRole
         };
         return responseModel;
       }
@@ -150,7 +151,7 @@ namespace FundooRepositoryLayer.Services
     /// </summary>
     /// <param name="resetPassword">The reset password.</param>
     /// <returns>it return true if password changed sucessfully</returns>
-  public async Task<bool> ResetPassword(ResetPassword resetPassword,int userid)
+    public async Task<bool> ResetPassword(ResetPassword resetPassword, int userid)
     {
       try
       {

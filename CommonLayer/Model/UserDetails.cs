@@ -32,5 +32,6 @@ namespace CommonLayer.Model
     public bool IsActive { get; set; }
     public DateTime IsCreated { get; set; }
     public DateTime IsModified { get; set; }
+    public string UserRole { get; set; }
   }
 }

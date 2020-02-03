@@ -5,10 +5,8 @@
 //-----------------------------------------------------------------------
 namespace FundooCommonLayer.Model
 {
-    using FundooCommonLayer.ModelRequest;
-    using System;
-using System.Collections.Generic;
-using System.Text;
+  using System;
+  using System.Collections.Generic;
 
   /// <summary>
   /// This is the class for responsemodel.
@@ -23,6 +21,7 @@ using System.Text;
     public bool IsActive { get; set; }
     public DateTime IsCreated { get; set; }
     public DateTime IsModified { get; set; }
+    public string UserRole { get; set; }
   }
   public class NoteResponseModel
   {
@@ -38,6 +37,7 @@ using System.Text;
     public DateTime IsCreated { get; set; }
     public DateTime IsModified { get; set; }
     public List<LabelResponseModel> labels { get; set; }
+    public List<CollaborateResponse> CollaborateResponse { get; set; }
   }
   public class LabelResponseModel
   {
@@ -45,5 +45,22 @@ using System.Text;
     public string LabelName { get; set; }
     public DateTime IsCreated { get; set; }
     public DateTime IsModified { get; set; }
+  }
+  public class CollaborateResponse
+  {
+    public int UserId { get; set; }
+    public string FirstName { get; set; }
+    public string LastName { get; set; }
+    public string Email { get; set; }
+  }
+  public class GetAllUserResponse
+  {
+    public int userid { get; set; }
+    public string FirstName { get; set; }
+    public string LastName { get; set; }
+    public string Email { get; set; }
+    public string Type { get; set; }
+    public string UserRole { get; set; }
+    public int NumberOfNotes {  get; set; }
   }
 }

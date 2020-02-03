@@ -70,6 +70,8 @@ namespace FundooNotes
       services.AddScoped<INotesRepository, NotesRepository>();
       services.AddScoped<ILabelBusiness, LabelBusiness>();
       services.AddScoped<ILabelRepository, LabelRepository>();
+      services.AddScoped<IAdminBusiness, AdminBusiness>();
+      services.AddScoped<IAdminRepository, AdminRepository>();
       services.AddSwaggerGen(c =>
       {
         c.SwaggerDoc("v1", new Info { Title = "My API", Version = "v1" });

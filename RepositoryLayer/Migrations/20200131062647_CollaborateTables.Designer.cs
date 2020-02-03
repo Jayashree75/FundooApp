@@ -4,14 +4,16 @@ using FundooRepositoryLayer.ModelDB;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace FundooRepositoryLayer.Migrations
 {
     [DbContext(typeof(UserContext))]
-    partial class UserContextModelSnapshot : ModelSnapshot
+    [Migration("20200131062647_CollaborateTables")]
+    partial class CollaborateTables
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -45,8 +47,6 @@ namespace FundooRepositoryLayer.Migrations
 
                     b.Property<string>("Type");
 
-                    b.Property<string>("UserRole");
-
                     b.HasKey("UserId");
 
                     b.HasIndex("Email")
@@ -60,6 +60,8 @@ namespace FundooRepositoryLayer.Migrations
                     b.Property<int>("ID")
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Email");
 
                     b.Property<int>("NoteID");
 

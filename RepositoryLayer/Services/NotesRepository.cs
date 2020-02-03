@@ -5,6 +5,7 @@
 //-----------------------------------------------------------------------
 namespace FundooRepositoryLayer.Services
 {
+  using CommonLayer.Model;
   using FundooCommonLayer.Model;
   using FundooCommonLayer.ModelRequest;
   using FundooRepositoryLayer.Interfaces;
@@ -41,9 +42,12 @@ namespace FundooRepositoryLayer.Services
           Title = requestedNotes.Title,
           Description = requestedNotes.Description,
           Reminder = DateTime.Now,
+          Image = string.IsNullOrWhiteSpace(requestedNotes.Image) ? "null" : ImageModel.ImageAdd(requestedNotes.Image),
+          Color = string.IsNullOrWhiteSpace(requestedNotes.Color) ? "null" : requestedNotes.Color,
           IsCreated = DateTime.Now,
           IsModified = DateTime.Now,
           IsPin = requestedNotes.IsPin,
+          IsTrash = requestedNotes.IsTrash,
           IsArchive = requestedNotes.IsArchive
         };
         _userContext.Notes.Add(notesdb);
@@ -67,7 +71,7 @@ namespace FundooRepositoryLayer.Services
             }
           }
         }
-        List<LabelResponseModel> labelResponseModels = _userContext.Noteslabels.Where(note=>note.NoteID==notesdb.NoteID).
+        List<LabelResponseModel> labelResponseModels = _userContext.Noteslabels.Where(note => note.NoteID == notesdb.NoteID).
                                                   Join(_userContext.label,
                                                   label => label.LabelID,
                                                   note => note.LabelID,
@@ -79,6 +83,31 @@ namespace FundooRepositoryLayer.Services
                                                     IsModified = label.IsModified
                                                   }).ToList();
 
+        if (requestedNotes != null && requestedNotes.collaborateRequests.Count != 0)
+        {
+          List<CollaborateRequest> collaborateRequests = requestedNotes.collaborateRequests;
+          foreach (CollaborateRequest collaborate in collaborateRequests)
+          {
+            var data = new CollaborateDb()
+            {
+              UserId = collaborate.UserId,
+              NoteID = notesdb.NoteID
+            };
+            _userContext.collaborates.Add(data);
+            _userContext.SaveChanges();
+          }
+        }
+        List<CollaborateResponse> collaborateResponses = _userContext.collaborates.Where(note => note.NoteID == notesdb.NoteID).Join(_userContext.Users,
+          user => user.UserId,
+          note => note.UserId,
+          (user, note) => new CollaborateResponse
+          {
+            UserId = user.UserId,
+            FirstName = note.FirstName,
+            LastName = note.LastName,
+            Email = note.Email
+          }).ToList();
+
         NoteResponseModel noteResponseModel = new NoteResponseModel()
         {
           NoteID = notesdb.NoteID,
@@ -88,11 +117,14 @@ namespace FundooRepositoryLayer.Services
           IsCreated = notesdb.IsCreated,
           IsModified = notesdb.IsModified,
           IsPin = notesdb.IsPin,
+          IsTrash = notesdb.IsTrash,
           IsArchive = notesdb.IsArchive,
           Color = notesdb.Color,
-          Image = notesdb.Color,
-          labels = labelResponseModels
+          Image = notesdb.Image,
+          labels = labelResponseModels,
+          CollaborateResponse = collaborateResponses
         };
+
         return noteResponseModel;
       }
       catch (Exception e)
@@ -115,6 +147,10 @@ namespace FundooRepositoryLayer.Services
         {
           List<Noteslabel> noteslabels = _userContext.Noteslabels.Where(linq => linq.NoteID == noteid).ToList();
           _userContext.Noteslabels.RemoveRange(noteslabels);
+          _userContext.SaveChanges();
+
+          List<CollaborateDb> collaborateDbs = _userContext.collaborates.Where(linq => linq.NoteID == noteid).ToList();
+          _userContext.collaborates.RemoveRange(collaborateDbs);
           _userContext.SaveChanges();
           if (notes.IsTrash == true)
           {
@@ -143,9 +179,8 @@ namespace FundooRepositoryLayer.Services
     /// </summary>
     /// <param name="userid"></param>
     /// <returns></returns>
-    public List<NoteResponseModel> GetNotes(int userid)
+    public List<NoteResponseModel> GetNotes(int userid, string keyword)
     {
-
       try
       {
         List<NoteResponseModel> notesDBs = _userContext.Notes.Where(note => note.UserId == userid).
@@ -179,9 +214,68 @@ namespace FundooRepositoryLayer.Services
                                                   IsModified = label.IsModified
                                                 }).ToList();
             noteResponse.labels = labelResponseModels;
+
+            List<CollaborateResponse> collaborates = _userContext.collaborates.Where(note => note.NoteID == noteResponse.NoteID).Join(_userContext.Users,
+              collab => collab.UserId,
+              user => user.UserId,
+              (collab, user) => new CollaborateResponse
+              {
+                UserId = user.UserId,
+                Email = user.Email,
+                FirstName = user.FirstName,
+                LastName = user.LastName
+              }).ToList();
+            noteResponse.CollaborateResponse = collaborates;
           }
         }
-        return notesDBs;
+        List<NoteResponseModel> noteResponseModels1 = _userContext.collaborates.Where(linq => linq.UserId == userid).Join(_userContext.Notes,
+          collab => collab.NoteID,
+          note => note.NoteID,
+          (collab, note) => new NoteResponseModel
+          {
+            Title = note.Title,
+            Description = note.Description,
+            Reminder = note.Reminder,
+            Image = note.Image,
+            IsArchive = note.IsArchive,
+            IsPin = note.IsPin,
+            IsTrash = note.IsTrash,
+            IsCreated = note.IsCreated,
+            IsModified = note.IsModified,
+            NoteID = note.NoteID
+          }).ToList();
+        foreach (var collab in noteResponseModels1)
+        {
+          List<CollaborateResponse> collaborateResponses = _userContext.Notes.
+            Where(note => note.NoteID == collab.NoteID)
+            .Join(_userContext.Users,
+            collaborate => collaborate.UserId,
+            note => note.UserId, (collaborate, note) => new CollaborateResponse
+            {
+              UserId = note.UserId,
+              Email = note.Email,
+              FirstName = note.FirstName,
+              LastName = note.LastName
+            }).ToList();
+          collab.CollaborateResponse = collaborateResponses;
+        }
+        if (keyword != null)
+        {
+          List<NoteResponseModel> noteResponseModels = SearchNote(userid, keyword);
+          return noteResponseModels;
+        }
+        else
+        {
+          if (notesDBs.Count != 0)
+          {
+            return notesDBs;
+          }
+          else
+          {
+            return null;
+          }
+
+        }
       }
       catch (Exception e)
       {
@@ -189,6 +283,36 @@ namespace FundooRepositoryLayer.Services
       }
     }
 
+    /// <summary>
+    /// Searches the note.
+    /// </summary>
+    /// <param name="userid">The userid.</param>
+    /// <param name="keyword">The keyword.</param>
+    /// <returns></returns>
+    public List<NoteResponseModel> SearchNote(int userid, string keyword)
+    {
+      List<NoteResponseModel> noteResponseModels = null;
+      if (keyword != null)
+      {
+        noteResponseModels = _userContext.Notes.Where(linq => (linq.Title.Contains(keyword) || linq.Description.Contains(keyword)) && (linq.UserId == userid)).
+          Select(linq => new NoteResponseModel
+          {
+            NoteID = linq.NoteID,
+            Title = linq.Title,
+            Description = linq.Description,
+            Reminder = linq.Reminder,
+            Image = linq.Image,
+            IsArchive = linq.IsArchive,
+            IsTrash = linq.IsTrash,
+            IsPin = linq.IsPin,
+            IsCreated = linq.IsCreated,
+            IsModified = linq.IsModified
+          }
+        ).ToList();
+      }
+      return noteResponseModels;
+
+    }
     /// <summary>
     /// This is method to get notes by noteid.
     /// </summary>
@@ -257,8 +381,8 @@ namespace FundooRepositoryLayer.Services
           notes.Description = request.Description;
           notes.IsModified = DateTime.Now;
           notes.Reminder = DateTime.Now;
-          notes.Color = request.Color;
-          notes.Image = request.Image;
+          notes.Color = string.IsNullOrWhiteSpace(request.Color) ? "null" : request.Color;
+          notes.Image = string.IsNullOrWhiteSpace(request.Image) ? "null" : ImageModel.ImageAdd(request.Image);
           var note = this._userContext.Notes.Attach(notes);
           note.State = Microsoft.EntityFrameworkCore.EntityState.Modified;
           await this._userContext.SaveChangesAsync();
@@ -646,7 +770,7 @@ namespace FundooRepositoryLayer.Services
         List<NotesDB> notes = _userContext.Notes.Where(linq => linq.UserId == userid && linq.IsTrash == true && linq.IsPin == false && linq.IsArchive == false).ToList();
         if (notes.Count != 0)
         {
-          foreach(NotesDB data in notes)
+          foreach (NotesDB data in notes)
           {
             List<Noteslabel> noteslabels = _userContext.Noteslabels.Where(linq => linq.NoteID == data.NoteID).ToList();
             _userContext.Noteslabels.RemoveRange(noteslabels);
@@ -690,7 +814,6 @@ namespace FundooRepositoryLayer.Services
       }).FirstOrDefault();
       return noteResponseModel;
     }
-
 
     /// <summary>
     /// Add the image.
@@ -765,6 +888,60 @@ namespace FundooRepositoryLayer.Services
       {
         return null;
       }
+    }
+
+    /// <summary>
+    /// Collaborates the specified userid.
+    /// </summary>
+    /// <param name="userid">The userid.</param>
+    /// <returns></returns>
+    public NoteResponseModel Collaborate(MultipleCollaborate collaborate, int noteid)
+    {
+      var notesdb = _userContext.Notes.FirstOrDefault(linq => linq.NoteID == noteid);
+      if (notesdb != null && collaborate.Collaborates.Count != 0)
+      {
+        foreach (CollaborateRequest request in collaborate.Collaborates)
+        {
+          UserDetails user = _userContext.Users.FirstOrDefault(linq => linq.UserId == request.UserId);
+          if (request.UserId != 0 && user != null)
+          {
+            var data = new CollaborateDb()
+            {
+              NoteID = notesdb.NoteID,
+              UserId = user.UserId
+            };
+            _userContext.collaborates.Add(data);
+            _userContext.SaveChanges();
+          }
+        }
+      }
+      List<CollaborateResponse> collaborateRequests = _userContext.collaborates.Where(note => note.NoteID == notesdb.NoteID).
+                                                Join(_userContext.Users,
+                                                user => user.UserId,
+                                                collab => collab.UserId,
+                                                (user, collab) => new CollaborateResponse
+                                                {
+                                                  UserId = user.UserId,
+                                                  FirstName = collab.FirstName,
+                                                  LastName = collab.LastName,
+                                                  Email = collab.Email
+                                                }).ToList();
+
+      NoteResponseModel noteResponse = new NoteResponseModel()
+      {
+        NoteID = notesdb.NoteID,
+        Title = notesdb.Title,
+        Description = notesdb.Description,
+        IsCreated = notesdb.IsCreated,
+        IsModified = notesdb.IsModified,
+        Reminder = notesdb.Reminder,
+        Image = notesdb.Image,
+        IsArchive = notesdb.IsArchive,
+        Color = notesdb.Color,
+        IsPin = notesdb.IsPin,
+        CollaborateResponse = collaborateRequests
+      };
+      return noteResponse;
     }
   }
 }

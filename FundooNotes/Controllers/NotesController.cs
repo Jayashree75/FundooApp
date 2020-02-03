@@ -126,7 +126,7 @@ namespace FundooNotes.Controllers
     /// <returns></returns>
     /// <exception cref="Exception"></exception>
     [HttpGet]
-    public IActionResult GetNotes()
+    public IActionResult GetNotes(string keyword)
     {
       try
       {
@@ -139,7 +139,7 @@ namespace FundooNotes.Controllers
           if (user.Claims.FirstOrDefault(c => c.Type == "Typetoken").Value == "Login")
           {
             int UserId = Convert.ToInt32(user.Claims.FirstOrDefault(c => c.Type == "UserId").Value);
-            notesDBs = _notesBusiness.GetNotes(UserId);
+            notesDBs = _notesBusiness.GetNotes(UserId, keyword);
             if (notesDBs != null)
             {
               status = true;
@@ -700,5 +700,37 @@ namespace FundooNotes.Controllers
       }
       return BadRequest("used invalid token");
     }
+    [HttpPost]
+    [Route("Collaborate")]
+    public IActionResult Collaborate(MultipleCollaborate collaborate, int noteid)
+    {
+      bool status;
+      string message;
+      var user = HttpContext.User;
+      NoteResponseModel notesDB = new NoteResponseModel();
+      if (user.HasClaim(c => c.Type == "Typetoken"))
+      {
+        if (user.Claims.FirstOrDefault(c => c.Type == "Typetoken").Value == "Login")
+        {
+          int UserId = Convert.ToInt32(user.Claims.FirstOrDefault(c => c.Type == "UserId").Value);
+          notesDB = _notesBusiness.Collaborate(collaborate, noteid);
+          if (notesDB != null)
+          {
+            status = true;
+            message = "collaboration successful";
+            return Ok(new { status, message, notesDB });
+          }
+          else
+          {
+            status = false;
+            message = "collaboration failed";
+            return NotFound(new { status, message });
+          }
+        }
+      }
+      return BadRequest("used invalid token");
+    }
+
   }
+
 }

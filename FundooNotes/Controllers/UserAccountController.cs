@@ -11,7 +11,6 @@ namespace FundooNotes.Controllers
   using System.Security.Claims;
   using System.Text;
   using System.Threading.Tasks;
-  using CommonLayer.Model;
   using FundooBusinessLayer.Interfaces;
   using FundooCommonLayer.Model;
   using FundooCommonLayer.ModelRequest;

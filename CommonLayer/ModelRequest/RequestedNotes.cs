@@ -5,7 +5,6 @@
   using System.ComponentModel;
   using System.ComponentModel.DataAnnotations;
   using System.ComponentModel.DataAnnotations.Schema;
-  using System.Text;
 
 
   public class RequestedNotesUpdate
@@ -21,6 +20,7 @@
     public bool IsTrash { get; set; }
     public string Color { get; set; }
     public List<RequestNotesLabel> labels { get; set; }
+    public List<CollaborateRequest> collaborateRequests { get; set; }
 
   }
   public class RequestNotes
@@ -54,5 +54,13 @@
   public class ImageUpload
   {
     public string Image { get; set; }
+  }
+  public class CollaborateRequest
+  {
+    public int UserId { get; set; }
+  }
+  public class MultipleCollaborate
+  {
+    public List<CollaborateRequest> Collaborates { get; set; }
   }
 }

@@ -30,7 +30,7 @@ namespace FundooBusinessLayer.Interfaces
     /// </summary>
     /// <param name="userid">The userid.</param>
     /// <returns></returns>
-    List<NoteResponseModel> GetNotes(int userid);
+    List<NoteResponseModel> GetNotes(int userid,string keyword);
 
     /// <summary>
     /// Updates the notes.
@@ -122,7 +122,22 @@ namespace FundooBusinessLayer.Interfaces
     /// <param name="userid">The userid.</param>
     /// <returns></returns>
     NoteResponseModel ColorChange(int noteid, RequestColour requestColour, int userid);
+
+    /// <summary>
+    /// Adds the image.
+    /// </summary>
+    /// <param name="noteid">The noteid.</param>
+    /// <param name="userid">The userid.</param>
+    /// <param name="image">The image.</param>
+    /// <returns></returns>
     string AddImage(int noteid, int userid, ImageUpload image);
+
+    /// <summary>
+    /// Remainders the list.
+    /// </summary>
+    /// <param name="Userid">The userid.</param>
+    /// <returns></returns>
     List<NoteResponseModel> RemainderList(int Userid);
+    NoteResponseModel Collaborate(MultipleCollaborate collaborate, int noteid);
   }
 }

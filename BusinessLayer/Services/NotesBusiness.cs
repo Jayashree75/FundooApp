@@ -6,7 +6,6 @@
   using FundooRepositoryLayer.Interfaces;
   using System;
   using System.Collections.Generic;
-  using System.Text;
   using System.Threading.Tasks;
 
   /// <summary>
@@ -207,13 +206,13 @@
     /// <param name="userid">The userid.</param>
     /// <returns></returns>
     /// <exception cref="Exception"></exception>
-    public List<NoteResponseModel> GetNotes(int userid)
+    public List<NoteResponseModel> GetNotes(int userid,string keyword)
     {
       try
       {
         if (userid != 0)
         {
-          return _notesRepository.GetNotes(userid);
+          return _notesRepository.GetNotes(userid,keyword);
         }
         else
         {
@@ -403,6 +402,18 @@
       if (Userid != 0)
       {
         return _notesRepository.RemainderList(Userid);
+      }
+      else
+      {
+        return null;
+      }
+    }
+
+    public NoteResponseModel Collaborate(MultipleCollaborate collaborate, int noteid)
+    {
+      if(noteid!=0 && collaborate!=null)
+      {
+        return _notesRepository.Collaborate(collaborate, noteid);
       }
       else
       {
