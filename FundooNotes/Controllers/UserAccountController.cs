@@ -29,7 +29,7 @@ namespace FundooNotes.Controllers
   public class UserAccountController : ControllerBase
   {
     private readonly IUserBusiness _userBusiness;
-    private  IConfiguration _config;
+    private IConfiguration _config;
 
     public UserAccountController(IUserBusiness userBusiness, IConfiguration config)
     {
@@ -51,23 +51,42 @@ namespace FundooNotes.Controllers
         var result = await _userBusiness.Register(registratin);
         if (result != null)
         {
-          var sucess = true;
-          var message = "Registration successful";
-          return Ok(new { sucess, message, result });
+          if (IsEmptyfield(registratin))
+          {
+            var sucess = true;
+            var message = "Registration successful";
+            return Ok(new { sucess, message, result });
+          }
+          else
+          {
+            var sucess = true;
+            var message = "Registration failed";
+            return BadRequest(new { sucess, message });
+          }
         }
-        else
-        {
-          var sucess = true;
-          var message = "Registration failed";
-          return BadRequest(new { sucess, message });
-        }
+        var success = true;
+        var mesage = "failed to add";
+        return BadRequest(new { success,mesage});
+
       }
       catch (Exception e)
       {
         throw new Exception(e.Message);
       }
     }
-
+    private bool IsEmptyfield(Registratin registratin)
+    {
+      if (string.IsNullOrWhiteSpace(registratin.FirstName) || string.IsNullOrWhiteSpace(registratin.LastName) || string.IsNullOrWhiteSpace(registratin.Email) ||
+        !registratin.Email.Contains('@') || !registratin.Email.Contains('.') || registratin.FirstName.Length < 5 || registratin.LastName.Length < 5 || 
+        string.IsNullOrWhiteSpace(registratin.Password)|| string.IsNullOrWhiteSpace(registratin.Type))
+      {
+        return false;
+      }
+      else
+      {
+        return true;
+      }
+    }
     /// <summary>
     /// This is the method for Post the loginDetail.
     /// </summary>
@@ -113,7 +132,7 @@ namespace FundooNotes.Controllers
       {
         if (forgetPassword == null || string.IsNullOrWhiteSpace(forgetPassword.Email) || !forgetPassword.Email.Contains('@') || !forgetPassword.Email.Contains('.'))
         {
-          return BadRequest(new { Message ="Please Provide the Data Properly." });
+          return BadRequest(new { Message = "Please Provide the Data Properly." });
         }
         ResponseModel data = _userBusiness.ForgetPassword(forgetPassword);
         if (data != null)

@@ -302,7 +302,7 @@ namespace FundooNotes.Controllers
     /// <exception cref="Exception"></exception>
     [HttpPut]
     [Route("{noteid}/Trash")]
-    public async Task<IActionResult> TrashNotes(int noteid)
+    public async Task<IActionResult> TrashNotes(int noteid,TrashValue trash)
     {
       try
       {
@@ -314,7 +314,7 @@ namespace FundooNotes.Controllers
           if (user.Claims.FirstOrDefault(c => c.Type == "Typetoken").Value == "Login")
           {
             int UserId = Convert.ToInt32(user.Claims.FirstOrDefault(c => c.Type == "UserId").Value);
-            bool result = await _notesBusiness.Trash(UserId, noteid);
+            bool result = await _notesBusiness.Trash(UserId, noteid,trash);
             if (result)
             {
               status = true;
@@ -388,7 +388,7 @@ namespace FundooNotes.Controllers
     /// <exception cref="Exception"></exception>
     [HttpPut]
     [Route("{noteid}/Archive")]
-    public async Task<IActionResult> ArchiveNotes(int noteid)
+    public async Task<IActionResult> ArchiveNotes(int noteid,TrashValue archive)
     {
       try
       {
@@ -400,7 +400,7 @@ namespace FundooNotes.Controllers
           if (user.Claims.FirstOrDefault(c => c.Type == "Typetoken").Value == "Login")
           {
             int UserId = Convert.ToInt32(user.Claims.FirstOrDefault(c => c.Type == "UserId").Value);
-            bool result = await _notesBusiness.Archive(UserId, noteid);
+            bool result = await _notesBusiness.Archive(UserId, noteid,archive);
             if (result)
             {
               status = true;
@@ -474,7 +474,7 @@ namespace FundooNotes.Controllers
     /// <exception cref="Exception"></exception>
     [HttpPut]
     [Route("{noteid}/Pin")]
-    public async Task<IActionResult> PinnedNotes(int noteid)
+    public async Task<IActionResult> PinnedNotes(int noteid,TrashValue pin)
     {
       try
       {
@@ -486,7 +486,7 @@ namespace FundooNotes.Controllers
           if (user.Claims.FirstOrDefault(c => c.Type == "Typetoken").Value == "Login")
           {
             int UserId = Convert.ToInt32(user.Claims.FirstOrDefault(c => c.Type == "UserId").Value);
-            bool result = await _notesBusiness.Pinned(UserId, noteid);
+            bool result = await _notesBusiness.Pinned(UserId, noteid,pin);
             if (result)
             {
               status = true;

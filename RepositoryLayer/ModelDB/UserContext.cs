@@ -8,10 +8,7 @@ namespace FundooRepositoryLayer.ModelDB
   using CommonLayer.Model;
   using FundooCommonLayer.Model;
   using Microsoft.EntityFrameworkCore;
-  using System;
-  using System.Collections.Generic;
-  using System.Text;
-
+ 
   /// <summary>
   /// This is the class for usercontext which implement DbContext.
   /// </summary>
@@ -22,13 +19,6 @@ namespace FundooRepositoryLayer.ModelDB
            : base(options)
     {
     }
-    /// <summary>
-    /// Gets the user details.
-    /// </summary>
-    /// <value>
-    /// The user details.
-    /// </value>
-    public static object UserDetails { get; internal set; }
     /// <summary>
     /// Gets or sets the users.
     /// </summary>

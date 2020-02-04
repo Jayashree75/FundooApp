@@ -62,7 +62,7 @@ namespace FundooBusinessLayer.Interfaces
     /// <param name="userid">The userid.</param>
     /// <param name="noteid">The noteid.</param>
     /// <returns></returns>
-    Task<bool> Trash(int userid, int noteid);
+    Task<bool> Trash(int userid, int noteid,TrashValue trash);
 
     /// <summary>
     /// Archives the specified noteid.
@@ -70,7 +70,7 @@ namespace FundooBusinessLayer.Interfaces
     /// <param name="userid">The userid.</param>
     /// <param name="noteid">The noteid.</param>
     /// <returns></returns>
-    Task<bool> Archive(int userid, int noteid);
+    Task<bool> Archive(int userid, int noteid,TrashValue archive);
 
     /// <summary>
     /// Pin the specified noteid.
@@ -78,7 +78,7 @@ namespace FundooBusinessLayer.Interfaces
     /// <param name="userid">The userid.</param>
     /// <param name="noteid">The noteid.</param>
     /// <returns></returns>
-    Task<bool> Pinned(int userid, int noteid);
+    Task<bool> Pinned(int userid, int noteid,TrashValue pin);
 
     /// <summary>
     /// Gets all pinned.

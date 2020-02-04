@@ -8,7 +8,6 @@ using FundooRepositoryLayer.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using System;
 using Xunit;
 
 namespace FundooUnitTest
@@ -164,6 +163,21 @@ namespace FundooUnitTest
         Email = "jayusawakare14@gmailcom"
       };
       var expecteddata = controller.ForgetPassword(data);
+      Assert.IsType<BadRequestObjectResult>(expecteddata);
+    }
+    [Fact]
+    public void Task_Registration_Return_BadResult()
+    {
+      var controller = new UserAccountController(_userBusiness, _config);
+      var data = new Registratin
+      {
+        FirstName="",
+        LastName="",
+        Email = "",
+        Password="",
+        Type=""
+      };
+      var expecteddata = controller.Registration(data);
       Assert.IsType<BadRequestObjectResult>(expecteddata);
     }
   }

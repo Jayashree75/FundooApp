@@ -56,13 +56,13 @@
     /// <param name="noteid">The noteid.</param>
     /// <returns></returns>
     /// <exception cref="Exception"></exception>
-    public async Task<bool> Archive(int userid, int noteid)
+    public async Task<bool> Archive(int userid, int noteid,TrashValue archive)
     {
       try
       {
         if (userid != 0 && noteid != 0)
         {
-          return await _notesRepository.Archive(userid, noteid);
+          return await _notesRepository.Archive(userid, noteid,archive);
         }
         else
         {
@@ -258,13 +258,13 @@
     /// <param name="noteid">The noteid.</param>
     /// <returns></returns>
     /// <exception cref="Exception"></exception>
-    public async Task<bool> Pinned(int userid, int noteid)
+    public async Task<bool> Pinned(int userid, int noteid,TrashValue pin)
     {
       try
       {
         if (userid != 0 && noteid != 0)
         {
-          return await _notesRepository.Pinned(userid, noteid);
+          return await _notesRepository.Pinned(userid, noteid,pin);
         }
         else
         {
@@ -284,13 +284,13 @@
     /// <param name="noteid">The noteid.</param>
     /// <returns></returns>
     /// <exception cref="Exception"></exception>
-    public async Task<bool> Trash(int userid, int noteid)
+    public async Task<bool> Trash(int userid, int noteid,TrashValue trash)
     {
       try
       {
         if (userid != 0 && noteid != 0)
         {
-          return await _notesRepository.Trash(userid, noteid);
+          return await _notesRepository.Trash(userid, noteid,trash);
         }
         else
         {

@@ -148,7 +148,6 @@ namespace FundooRepositoryLayer.Services
           List<Noteslabel> noteslabels = _userContext.Noteslabels.Where(linq => linq.NoteID == noteid).ToList();
           _userContext.Noteslabels.RemoveRange(noteslabels);
           _userContext.SaveChanges();
-
           List<CollaborateDb> collaborateDbs = _userContext.collaborates.Where(linq => linq.NoteID == noteid).ToList();
           _userContext.collaborates.RemoveRange(collaborateDbs);
           _userContext.SaveChanges();
@@ -338,6 +337,16 @@ namespace FundooRepositoryLayer.Services
                                                  IsModified = note.IsModified
                                                }).ToList();
 
+        List<CollaborateResponse> collaborateResponses = _userContext.collaborates.Where(note => note.NoteID == notesDB.NoteID).Join(_userContext.Users,
+          user => user.UserId,
+          note => note.UserId,
+          (user, note) => new CollaborateResponse
+          {
+            UserId = user.UserId,
+            FirstName = note.FirstName,
+            LastName = note.LastName,
+            Email = note.Email
+          }).ToList();
 
         NoteResponseModel noteResponse = _userContext.Notes.Where(c => (c.NoteID == noteid) && (c.UserId == userid)).
           Select(c => new NoteResponseModel
@@ -352,7 +361,8 @@ namespace FundooRepositoryLayer.Services
             IsTrash = c.IsTrash,
             IsCreated = c.IsCreated,
             IsModified = c.IsModified,
-            labels = labelResponseModels
+            labels = labelResponseModels,
+            CollaborateResponse = collaborateResponses
           }).FirstOrDefault();
         return noteResponse;
       }
@@ -415,21 +425,21 @@ namespace FundooRepositoryLayer.Services
     /// <param name="userid"></param>
     /// <param name="noteid"></param>
     /// <returns></returns>
-    public async Task<bool> Pinned(int userid, int noteid)
+    public async Task<bool> Pinned(int userid, int noteid, TrashValue pin)
     {
       try
       {
-        bool flag = false;
+        bool flag = pin.Value;
         NotesDB notes = _userContext.Notes.FirstOrDefault(c => (c.UserId == userid) && (c.NoteID == noteid));
         if (notes != null)
         {
-          if (notes.IsPin == false)
+          if (flag)
           {
             notes.IsPin = true;
             var note = this._userContext.Notes.Attach(notes);
             note.State = Microsoft.EntityFrameworkCore.EntityState.Modified;
             await this._userContext.SaveChangesAsync();
-            flag = true;
+            return true;
           }
           else
           {
@@ -437,10 +447,10 @@ namespace FundooRepositoryLayer.Services
             var note = this._userContext.Notes.Attach(notes);
             note.State = Microsoft.EntityFrameworkCore.EntityState.Modified;
             await this._userContext.SaveChangesAsync();
-            flag = false;
+            return false;
           }
         }
-        return flag;
+        return false;
       }
       catch (Exception e)
       {
@@ -488,6 +498,18 @@ namespace FundooRepositoryLayer.Services
                                                   IsModified = label.IsModified
                                                 }).ToList();
             noteResponse.labels = labelResponseModels;
+
+            List<CollaborateResponse> collaborates = _userContext.collaborates.Where(note => note.NoteID == noteResponse.NoteID).Join(_userContext.Users,
+             collab => collab.UserId,
+             user => user.UserId,
+             (collab, user) => new CollaborateResponse
+             {
+               UserId = user.UserId,
+               Email = user.Email,
+               FirstName = user.FirstName,
+               LastName = user.LastName
+             }).ToList();
+            noteResponse.CollaborateResponse = collaborates;
           }
         }
         if (notesDBs.Count != 0)
@@ -511,11 +533,11 @@ namespace FundooRepositoryLayer.Services
     /// <param name="userid"></param>
     /// <param name="noteid"></param>
     /// <returns></returns>
-    public async Task<bool> Trash(int userid, int noteid)
+    public async Task<bool> Trash(int userid, int noteid, TrashValue trash)
     {
       try
       {
-        bool flag = false;
+        bool flag = trash.Value;
         NotesDB notes = _userContext.Notes.FirstOrDefault(c => (c.UserId == userid) && (c.NoteID == noteid));
         if (notes != null)
         {
@@ -525,7 +547,7 @@ namespace FundooRepositoryLayer.Services
             var note = this._userContext.Notes.Attach(notes);
             note.State = Microsoft.EntityFrameworkCore.EntityState.Modified;
             await this._userContext.SaveChangesAsync();
-            flag = true;
+            return true;
           }
           else
           {
@@ -533,10 +555,10 @@ namespace FundooRepositoryLayer.Services
             var note = this._userContext.Notes.Attach(notes);
             note.State = Microsoft.EntityFrameworkCore.EntityState.Modified;
             await this._userContext.SaveChangesAsync();
-            flag = false;
+            return false;
           }
         }
-        return flag;
+        return false;
       }
       catch (Exception e)
       {
@@ -584,6 +606,17 @@ namespace FundooRepositoryLayer.Services
                                                   IsModified = label.IsModified
                                                 }).ToList();
             noteResponse.labels = labelResponseModels;
+            List<CollaborateResponse> collaborates = _userContext.collaborates.Where(note => note.NoteID == noteResponse.NoteID).Join(_userContext.Users,
+             collab => collab.UserId,
+             user => user.UserId,
+             (collab, user) => new CollaborateResponse
+             {
+               UserId = user.UserId,
+               Email = user.Email,
+               FirstName = user.FirstName,
+               LastName = user.LastName
+             }).ToList();
+            noteResponse.CollaborateResponse = collaborates;
           }
         }
         if (notesDBs.Count != 0)
@@ -607,11 +640,11 @@ namespace FundooRepositoryLayer.Services
     /// <param name="userid"></param>
     /// <param name="noteid"></param>
     /// <returns></returns>
-    public async Task<bool> Archive(int userid, int noteid)
+    public async Task<bool> Archive(int userid, int noteid, TrashValue archive)
     {
       try
       {
-        bool flag = false;
+        bool flag = archive.Value;
         NotesDB notes = _userContext.Notes.FirstOrDefault(c => (c.UserId == userid) && (c.NoteID == noteid));
         if (notes != null)
         {
@@ -621,7 +654,7 @@ namespace FundooRepositoryLayer.Services
             var note = this._userContext.Notes.Attach(notes);
             note.State = Microsoft.EntityFrameworkCore.EntityState.Modified;
             await this._userContext.SaveChangesAsync();
-            flag = true;
+            return true;
           }
           else
           {
@@ -629,10 +662,10 @@ namespace FundooRepositoryLayer.Services
             var note = this._userContext.Notes.Attach(notes);
             note.State = Microsoft.EntityFrameworkCore.EntityState.Modified;
             await this._userContext.SaveChangesAsync();
-            flag = false;
+            return false;
           }
         }
-        return flag;
+        return false;
       }
       catch (Exception e)
       {
@@ -681,6 +714,17 @@ namespace FundooRepositoryLayer.Services
                                                   IsModified = label.IsModified
                                                 }).ToList();
             noteResponse.labels = labelResponseModels;
+            List<CollaborateResponse> collaborates = _userContext.collaborates.Where(note => note.NoteID == noteResponse.NoteID).Join(_userContext.Users,
+             collab => collab.UserId,
+             user => user.UserId,
+             (collab, user) => new CollaborateResponse
+             {
+               UserId = user.UserId,
+               Email = user.Email,
+               FirstName = user.FirstName,
+               LastName = user.LastName
+             }).ToList();
+            noteResponse.CollaborateResponse = collaborates;
           }
         }
         if (notesDBs.Count != 0)
@@ -741,6 +785,17 @@ namespace FundooRepositoryLayer.Services
                                                   IsModified = label.IsModified
                                                 }).ToList();
             noteResponse.labels = labelResponseModels;
+            List<CollaborateResponse> collaborates = _userContext.collaborates.Where(note => note.NoteID == noteResponse.NoteID).Join(_userContext.Users,
+             collab => collab.UserId,
+             user => user.UserId,
+             (collab, user) => new CollaborateResponse
+             {
+               UserId = user.UserId,
+               Email = user.Email,
+               FirstName = user.FirstName,
+               LastName = user.LastName
+             }).ToList();
+            noteResponse.CollaborateResponse = collaborates;
           }
         }
         if (noteResponseModels.Count != 0)
@@ -774,6 +829,9 @@ namespace FundooRepositoryLayer.Services
           {
             List<Noteslabel> noteslabels = _userContext.Noteslabels.Where(linq => linq.NoteID == data.NoteID).ToList();
             _userContext.Noteslabels.RemoveRange(noteslabels);
+            _userContext.SaveChanges();
+            List<CollaborateDb> collaborateDbs = _userContext.collaborates.Where(linq => linq.NoteID == data.NoteID).ToList();
+            _userContext.collaborates.RemoveRange(collaborateDbs);
             _userContext.SaveChanges();
           }
           _userContext.Notes.RemoveRange(notes);
@@ -878,8 +936,21 @@ namespace FundooRepositoryLayer.Services
                                                 IsModified = label.IsModified
                                               }).ToList();
           noteResponse.labels = labelResponseModels;
+          List<CollaborateResponse> collaborates = _userContext.collaborates.Where(note => note.NoteID == noteResponse.NoteID).Join(_userContext.Users,
+             collab => collab.UserId,
+             user => user.UserId,
+             (collab, user) => new CollaborateResponse
+             {
+               UserId = user.UserId,
+               Email = user.Email,
+               FirstName = user.FirstName,
+               LastName = user.LastName
+             }).ToList();
+          noteResponse.CollaborateResponse = collaborates;
         }
       }
+      noteResponseModels.Sort((note1, note2) => DateTime.Now.CompareTo(note1.Reminder.Value));
+
       if (noteResponseModels.Count != 0)
       {
         return noteResponseModels;
