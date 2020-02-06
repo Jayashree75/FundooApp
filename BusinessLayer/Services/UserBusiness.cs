@@ -13,12 +13,12 @@ namespace FundooBusinessLayer.Services
   using FundooRepositoryLayer.Services;
   using System;
   using System.Threading.Tasks;
-    using Xunit.Sdk;
+  using Xunit.Sdk;
 
-    /// <summary>
-    /// This is the class of UserBusiness.
-    /// </summary>
-    public class UserBusiness : IUserBusiness
+  /// <summary>
+  /// This is the class of UserBusiness.
+  /// </summary>
+  public class UserBusiness : IUserBusiness
   {
     private readonly IUserRepository _userRepository;
     /// <summary>
@@ -104,17 +104,34 @@ namespace FundooBusinessLayer.Services
       }
     }
     /// <summary>
+    /// Adds the profile picture.
+    /// </summary>
+    /// <param name="userid">The userid.</param>
+    /// <param name="imageModel">The image model.</param>
+    /// <returns></returns>
+    public string AddProfilePicture(int userid, ImageUpload imageModel)
+    {
+      if (imageModel != null)
+      {
+        return _userRepository.AddProfilePicture(userid, imageModel);
+      }
+      else
+      {
+        return null;
+      }
+    }
+    /// <summary>
     /// Method for reset the password.
     /// </summary>
     /// <param name="resetPassword"></param>
     /// <returns></returns>
-    public async Task<bool> ResetPassword(ResetPassword resetPassword,int userid)
+    public async Task<bool> ResetPassword(ResetPassword resetPassword, int userid)
     {
       try
       {
-        if (resetPassword.Password != null || userid!=0)
+        if (resetPassword.Password != null || userid != 0)
         {
-          return await _userRepository.ResetPassword(resetPassword,userid);        
+          return await _userRepository.ResetPassword(resetPassword, userid);
         }
         else
         {

@@ -40,6 +40,14 @@ namespace FundooBusinessLayer.Interfaces
     ResponseModel ForgetPassword(ForgetPassword forgetPassword);
 
     /// <summary>
+    /// Adds the profile picture.
+    /// </summary>
+    /// <param name="userid">The userid.</param>
+    /// <param name="imageModel">The image model.</param>
+    /// <returns></returns>
+    string AddProfilePicture(int userid, ImageUpload imageModel);
+
+    /// <summary>
     /// Resets the password.
     /// </summary>
     /// <param name="resetPassword">The reset password.</param>

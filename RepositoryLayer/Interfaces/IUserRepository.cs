@@ -33,6 +33,14 @@ namespace FundooRepositoryLayer.Interfaces
     ResponseModel Login(Login login);
 
     /// <summary>
+    /// Adds the profile picture.
+    /// </summary>
+    /// <param name="userid">The userid.</param>
+    /// <param name="imageModel">The image model.</param>
+    /// <returns></returns>
+    string AddProfilePicture(int userid, ImageUpload imageModel);
+
+    /// <summary>
     /// Forgets the password.
     /// </summary>
     /// <param name="forgetPassword">The forget password.</param>

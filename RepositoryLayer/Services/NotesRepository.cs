@@ -42,7 +42,7 @@ namespace FundooRepositoryLayer.Services
           Title = requestedNotes.Title,
           Description = requestedNotes.Description,
           Reminder = DateTime.Now,
-          Image = string.IsNullOrWhiteSpace(requestedNotes.Image) ? "null" : ImageModel.ImageAdd(requestedNotes.Image),
+          Image = string.IsNullOrWhiteSpace(requestedNotes.Image.ToString()) ? "null" : ImageModel.ImageAdd(requestedNotes.Image),
           Color = string.IsNullOrWhiteSpace(requestedNotes.Color) ? "null" : requestedNotes.Color,
           IsCreated = DateTime.Now,
           IsModified = DateTime.Now,
@@ -397,7 +397,7 @@ namespace FundooRepositoryLayer.Services
           notes.IsModified = DateTime.Now;
           notes.Reminder = DateTime.Now;
           notes.Color = string.IsNullOrWhiteSpace(request.Color) ? "null" : request.Color;
-          notes.Image = string.IsNullOrWhiteSpace(request.Image) ? "null" : ImageModel.ImageAdd(request.Image);
+          notes.Image = string.IsNullOrWhiteSpace(request.Image.ToString()) ? "null" : ImageModel.ImageAdd(request.Image);
           var note = this._userContext.Notes.Attach(notes);
           note.State = Microsoft.EntityFrameworkCore.EntityState.Modified;
           await this._userContext.SaveChangesAsync();
@@ -887,7 +887,7 @@ namespace FundooRepositoryLayer.Services
     /// <returns></returns>
     public string AddImage(int noteid, int userid, ImageUpload imageModel)
     {
-      var data = _userContext.Notes.FirstOrDefault(linq => (linq.UserId == userid) && (linq.NoteID == noteid));
+      var data = _userContext.Notes.FirstOrDefault(linq =>linq.UserId == userid && linq.NoteID == noteid);
       if (data != null)
       {
         string imageurl = ImageModel.ImageAdd(imageModel.Image);
@@ -901,7 +901,6 @@ namespace FundooRepositoryLayer.Services
       {
         return null;
       }
-
     }
      
     /// <summary>

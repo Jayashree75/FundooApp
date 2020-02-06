@@ -33,5 +33,6 @@ namespace CommonLayer.Model
     public DateTime IsCreated { get; set; }
     public DateTime IsModified { get; set; }
     public string UserRole { get; set; }
+    public string ProfilePicture { get; set; }
   }
 }

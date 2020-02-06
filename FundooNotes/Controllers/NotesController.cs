@@ -56,7 +56,7 @@ namespace FundooNotes.Controllers
             if (notesDB != null)
             {
               status = true;
-              message = "Notes added successfully";
+              message = "Note has been successfully added";
               return Ok(new { status, message, notesDB });
             }
             else
@@ -100,7 +100,7 @@ namespace FundooNotes.Controllers
             if (requestedNotes != null)
             {
               status = true;
-              message = "Notes are Updated";
+              message = "Notes are Updated successfully";
               return Ok(new { status, message, requestedNotes });
             }
             else
@@ -275,7 +275,7 @@ namespace FundooNotes.Controllers
             if (result)
             {
               status = true;
-              message = "Notes are Deleted";
+              message = "Notes are Deleted successfully";
               return Ok(new { status, message });
             }
             else
@@ -318,7 +318,7 @@ namespace FundooNotes.Controllers
             if (result)
             {
               status = true;
-              message = "Note trashed";
+              message = "Note trash successfully";
               return Ok(new { status, message });
             }
             else
@@ -361,7 +361,7 @@ namespace FundooNotes.Controllers
             if (notesDBs != null)
             {
               status = true;
-              message = "All Trashed Notes";
+              message = "List of All Trashed Notes";
               return Ok(new { status, message, notesDBs });
             }
             else
@@ -404,7 +404,7 @@ namespace FundooNotes.Controllers
             if (result)
             {
               status = true;
-              message = "Note Archive";
+              message = "Note Archive successfully done";
               return Ok(new { status, message });
             }
             else
@@ -447,7 +447,7 @@ namespace FundooNotes.Controllers
             if (notesDBs != null)
             {
               status = true;
-              message = "All Archive Notes";
+              message = "List of All Archive Notes";
               return Ok(new { status, message, notesDBs });
             }
             else
@@ -490,7 +490,7 @@ namespace FundooNotes.Controllers
             if (result)
             {
               status = true;
-              message = "pinned";
+              message = "Notes are pin successfully";
               return Ok(new { status, message });
             }
             else
@@ -533,7 +533,7 @@ namespace FundooNotes.Controllers
             if (notesDBs != null)
             {
               status = true;
-              message = "All Pinned Notes";
+              message = "List of All Pinned Notes";
               return Ok(new { status, message, notesDBs });
             }
             else
@@ -615,7 +615,7 @@ namespace FundooNotes.Controllers
           if (result != null)
           {
             status = true;
-            message = "Color Change";
+            message = "Color Change successfully done";
             return Ok(new { status, message });
           }
           else
@@ -637,7 +637,7 @@ namespace FundooNotes.Controllers
     /// <returns></returns>
     [HttpPost]
     [Route("{noteid}/Image")]
-    public IActionResult AddImage(int noteid, ImageUpload image)
+    public IActionResult AddImage(int noteid, [FromForm] ImageUpload image)
     {
       bool status;
       string message;
@@ -687,19 +687,26 @@ namespace FundooNotes.Controllers
           if (notesDBs != null)
           {
             status = true;
-            message = "Image added successfully";
+            message = "List of all Remainder";
             return Ok(new { status, message, notesDBs });
           }
           else
           {
             status = false;
-            message = "Image added failed";
+            message = "Getting List of Remainder is failed";
             return NotFound(new { status, message });
           }
         }
       }
       return BadRequest("used invalid token");
     }
+
+    /// <summary>
+    /// Collaborates the specified collaborate.
+    /// </summary>
+    /// <param name="collaborate">The collaborate.</param>
+    /// <param name="noteid">The noteid.</param>
+    /// <returns></returns>
     [HttpPost]
     [Route("Collaborate")]
     public IActionResult Collaborate(MultipleCollaborate collaborate, int noteid)
@@ -717,7 +724,7 @@ namespace FundooNotes.Controllers
           if (notesDB != null)
           {
             status = true;
-            message = "collaboration successful";
+            message = "collaboration successful done";
             return Ok(new { status, message, notesDB });
           }
           else

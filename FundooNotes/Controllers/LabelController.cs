@@ -182,7 +182,7 @@ namespace FundooNotes.Controllers
             if (labelmodel != null)
             {
               status = true;
-              message = "All label";
+              message = "List of All label";
               return Ok(new { status, message, labelmodel });
             }
             else

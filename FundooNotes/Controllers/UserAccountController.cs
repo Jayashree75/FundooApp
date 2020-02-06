@@ -103,7 +103,7 @@ namespace FundooNotes.Controllers
         {
           var token = GenerateJSONWebToken(data, "Login");
           var success = true;
-          var message = "Login successful";
+          var message = "User Login successfully";
           return Ok(new { success, message, data, token });
         }
         else
@@ -117,6 +117,36 @@ namespace FundooNotes.Controllers
       {
         throw new Exception(e.Message);
       }
+    }
+    [HttpPost]
+    [Route("Image")]
+    public IActionResult AddImage([FromForm] ImageUpload image)
+    {
+      bool status;
+      string message;
+      var user = HttpContext.User;
+      ResponseModel response = new ResponseModel();
+      if (user.HasClaim(c => c.Type == "Typetoken"))
+      {
+        if (user.Claims.FirstOrDefault(c => c.Type == "Typetoken").Value == "Login")
+        {
+          int UserId = Convert.ToInt32(user.Claims.FirstOrDefault(c => c.Type == "UserId").Value);
+          string imageUrl = _userBusiness.AddProfilePicture(UserId, image);
+          if (imageUrl != null)
+          {
+            status = true;
+            message = "Image added successfully";
+            return Ok(new { status, message, imageUrl });
+          }
+          else
+          {
+            status = false;
+            message = "Image added failed";
+            return NotFound(new { status, message });
+          }
+        }
+      }
+      return BadRequest("used invalid token");
     }
 
     /// <summary>
@@ -139,14 +169,14 @@ namespace FundooNotes.Controllers
         {
           var token = GenerateJSONWebToken(data, "ForgetPassword");
           var success = true;
-          var message = "Email Verified";
+          var message = "Email Verified successfully";
           Send.SendMSMQ(token, forgetPassword.Email);
           return Ok(new { success, message, token });
         }
         else
         {
           var success = false;
-          var message = "Email not matched";
+          var message = "Email is not matched";
           return NotFound(new { success, message });
         }
       }

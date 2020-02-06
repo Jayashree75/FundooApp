@@ -33,7 +33,7 @@
       if (result != null)
       {
         var success = true;
-        var message = "Registration successful";
+        var message = "Registration is successfully done";
         return Ok(new { success, message, result });
       }
       else
@@ -53,7 +53,7 @@
 
         var token = GenerateJSONWebToken(result, "Login");
         var success = true;
-        var message = "Login successful";
+        var message = "Login successfully done";
         return Ok(new { success, message, result, token });
       }
       else
@@ -112,13 +112,13 @@
             if (result != null)
             {
               status = true;
-              message = "All User";
+              message = "List of All User";
               return Ok(new { status, message, result });
             }
             else
             {
               status = false;
-              message = "get user fail";
+              message = "getting List of user has been failed";
               return NotFound(new { status, message });
             }
           }

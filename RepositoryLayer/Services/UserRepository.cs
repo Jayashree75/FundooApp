@@ -68,6 +68,30 @@ namespace FundooRepositoryLayer.Services
     }
 
     /// <summary>
+    /// Adds the image.
+    /// </summary>
+    /// <param name="noteid">The noteid.</param>
+    /// <param name="userid">The userid.</param>
+    /// <param name="imageModel">The image model.</param>
+    /// <returns></returns>
+    public string AddProfilePicture(int userid, ImageUpload imageModel)
+    {
+      var data = _userContext.Users.FirstOrDefault(linq => linq.UserId == userid);
+      if (data != null)
+      {
+        string imageurl = ImageModel.ImageAdd(imageModel.Image);
+        data.ProfilePicture = imageurl;
+        var note = this._userContext.Users.Attach(data);
+        note.State = Microsoft.EntityFrameworkCore.EntityState.Modified;
+        this._userContext.SaveChanges();
+        return imageurl;
+      }
+      else
+      {
+        return null;
+      }
+    }
+    /// <summary>
     /// method for Logins the specified login.
     /// </summary>
     /// <param name="login">The login.</param>

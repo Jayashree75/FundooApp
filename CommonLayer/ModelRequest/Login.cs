@@ -51,5 +51,6 @@ using System.Text;
     [Required]
     public string Password { get; set; }
     public string Type { get; set; }
+    public string ProfilePicture { get; set; }
   }
 }

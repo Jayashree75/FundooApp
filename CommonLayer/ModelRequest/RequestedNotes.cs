@@ -1,6 +1,7 @@
 ﻿namespace FundooCommonLayer.ModelRequest
 {
-  using System;
+    using Microsoft.AspNetCore.Http;
+    using System;
   using System.Collections.Generic;
   using System.ComponentModel;
   using System.ComponentModel.DataAnnotations;
@@ -12,7 +13,7 @@
     public string Title { get; set; }
     public string Description { get; set; }
     public DateTime? Reminder { get; set; }
-    public string Image { get; set; }
+    public IFormFile Image { get; set; }
     [DefaultValue(false)]
     public bool IsArchive { get; set; }
     [DefaultValue(false)]
@@ -28,7 +29,7 @@
     public string Title { get; set; }
     public string Description { get; set; }
     public DateTime? Reminder { get; set; }
-    public string Image { get; set; }
+    public IFormFile Image { get; set; }
     [DefaultValue(false)]
     public bool IsArchive { get; set; }
     [DefaultValue(false)]
@@ -53,7 +54,7 @@
   }
   public class ImageUpload
   {
-    public string Image { get; set; }
+    public IFormFile Image { get; set; }
   }
   public class CollaborateRequest
   {
