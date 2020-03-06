@@ -1,7 +1,7 @@
 ﻿namespace FundooCommonLayer.ModelRequest
 {
-    using Microsoft.AspNetCore.Http;
-    using System;
+  using Microsoft.AspNetCore.Http;
+  using System;
   using System.Collections.Generic;
   using System.ComponentModel;
   using System.ComponentModel.DataAnnotations;
@@ -13,7 +13,6 @@
     public string Title { get; set; }
     public string Description { get; set; }
     public DateTime? Reminder { get; set; }
-    public IFormFile Image { get; set; }
     [DefaultValue(false)]
     public bool IsArchive { get; set; }
     [DefaultValue(false)]
@@ -29,7 +28,6 @@
     public string Title { get; set; }
     public string Description { get; set; }
     public DateTime? Reminder { get; set; }
-    public IFormFile Image { get; set; }
     [DefaultValue(false)]
     public bool IsArchive { get; set; }
     [DefaultValue(false)]

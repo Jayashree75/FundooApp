@@ -45,15 +45,15 @@ using System.Threading.Tasks;
           IsModified = DateTime.Now,
           UserId = userid
         };
+        _userContext.label.Add(label);
+        await _userContext.SaveChangesAsync();
         LabelResponseModel labelResponseModel = new LabelResponseModel()
         {
           LabelID = label.LabelID,
           LabelName = label.LabelName,
           IsCreated = label.IsCreated,
           IsModified = label.IsModified
-        };
-        _userContext.label.Add(label);
-        await _userContext.SaveChangesAsync();
+        };      
         return labelResponseModel;
       }
       catch (Exception e)
@@ -135,8 +135,7 @@ using System.Threading.Tasks;
     {
       try
       {
-        var labelModel = _userContext.label.FirstOrDefault(c => (c.UserId == userid) && (c.LabelID == labelid));
-        LabelModel label = new LabelModel();
+        LabelModel labelModel = _userContext.label.FirstOrDefault(c => (c.UserId == userid) && (c.LabelID == labelid));
         if (labelModel != null)
         {
           labelModel.LabelName = requestedLabel.LabelName;
@@ -146,10 +145,10 @@ using System.Threading.Tasks;
         }
         LabelResponseModel labelResponseModel = new LabelResponseModel()
         {
-          LabelID = label.LabelID,
-          LabelName = label.LabelName,
-          IsCreated = label.IsCreated,
-          IsModified = label.IsModified
+          LabelID = labelModel.LabelID,
+          LabelName = labelModel.LabelName,
+          IsCreated = labelModel.IsCreated,
+          IsModified = labelModel.IsModified
         };
         return labelResponseModel;
       }

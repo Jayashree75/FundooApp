@@ -16,6 +16,7 @@ namespace FundooNotes.Controllers
   using FundooCommonLayer.ModelRequest;
   using FundooCommonLayer.MSMQ;
   using Microsoft.AspNetCore.Authorization;
+  using Microsoft.AspNetCore.Cors;
   using Microsoft.AspNetCore.Mvc;
   using Microsoft.Extensions.Configuration;
   using Microsoft.IdentityModel.Tokens;
@@ -26,6 +27,7 @@ namespace FundooNotes.Controllers
   /// </summary>
   [Route("api/[controller]")]
   [ApiController]
+  [EnableCors("CorsPolicy")]
   public class UserAccountController : ControllerBase
   {
     private readonly IUserBusiness _userBusiness;
@@ -44,29 +46,27 @@ namespace FundooNotes.Controllers
     /// <returns></returns>
     [HttpPost]
     [Route("Registration")]
-    public async Task<IActionResult> Registration([FromBody] Registratin registratin)
+    public async Task<IActionResult> Registration(Registratin registratin)
     {
       try
       {
         var result = await _userBusiness.Register(registratin);
         if (result != null)
         {
-          if (IsEmptyfield(registratin))
-          {
-            var sucess = true;
-            var message = "Registration successful";
-            return Ok(new { sucess, message, result });
-          }
-          else
-          {
-            var sucess = true;
-            var message = "Registration failed";
-            return BadRequest(new { sucess, message });
-          }
+          var sucess = true;
+          var message = "Registration successful";
+          return Ok(new { sucess, message, result });
         }
+        else
+        {
+          var sucess = true;
+          var message = "Registration failed";
+          return BadRequest(new { sucess, message });
+        }
+
         var success = true;
         var mesage = "failed to add";
-        return BadRequest(new { success,mesage});
+        return BadRequest(new { success, mesage });
 
       }
       catch (Exception e)
@@ -74,19 +74,7 @@ namespace FundooNotes.Controllers
         throw new Exception(e.Message);
       }
     }
-    private bool IsEmptyfield(Registratin registratin)
-    {
-      if (string.IsNullOrWhiteSpace(registratin.FirstName) || string.IsNullOrWhiteSpace(registratin.LastName) || string.IsNullOrWhiteSpace(registratin.Email) ||
-        !registratin.Email.Contains('@') || !registratin.Email.Contains('.') || registratin.FirstName.Length < 5 || registratin.LastName.Length < 5 || 
-        string.IsNullOrWhiteSpace(registratin.Password)|| string.IsNullOrWhiteSpace(registratin.Type))
-      {
-        return false;
-      }
-      else
-      {
-        return true;
-      }
-    }
+
     /// <summary>
     /// This is the method for Post the loginDetail.
     /// </summary>
@@ -153,7 +141,7 @@ namespace FundooNotes.Controllers
     /// This is the httppost method for forgetPassword.
     /// </summary>
     /// <param name="forgetPassword"></param>
-    /// <returns></returns>
+    /// <returns></returns> 
     [HttpPost]
     [Route("ForgetPassword")]
     public IActionResult ForgetPassword(ForgetPassword forgetPassword)

@@ -82,7 +82,19 @@ namespace FundooNotes
           Name = "Authorization",
           Type = "apiKey"
         });
+
         c.DocumentFilter<SecurityRequirementDocumentFilter>();
+      });
+
+      services.AddCors(options =>
+      {
+        options.AddPolicy("CorsPolicy",
+            builder => builder.AllowAnyOrigin()
+            .AllowAnyMethod()
+            .AllowAnyHeader()
+            .AllowCredentials()
+            .WithOrigins("http://localhost:4200")
+            );
       });
 
     }
@@ -107,6 +119,7 @@ namespace FundooNotes
       app.UseHttpsRedirection();
       app.UseMvc();
       app.UseSwagger();
+      app.UseCors("CorsPolicy");
       app.UseSwaggerUI(
         c =>
         {

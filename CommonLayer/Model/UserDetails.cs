@@ -1,4 +1,4 @@
-﻿//-----------------------------------------------------------------------
+﻿ //-----------------------------------------------------------------------
 // <copyright file="UserDetails.cs" company="Bridgelabz" Author="Jayashree sawakare">
 // Company copyright tag.
 // </copyright>
@@ -28,6 +28,7 @@ namespace CommonLayer.Model
     public string Email { get; set; }
     [Required]
     public string Password { get; set; }
+    [Required(AllowEmptyStrings = true)]
     public string Type { get; set; }
     public bool IsActive { get; set; }
     public DateTime IsCreated { get; set; }

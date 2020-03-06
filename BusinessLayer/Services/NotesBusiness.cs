@@ -20,6 +20,10 @@
       _notesRepository = notesRepository;
     }
 
+    public List<GetAllUserResponse> GetAllUser(string keyword)
+    {
+      return _notesRepository.GetAllUserList(keyword);
+    }
     /// <summary>
     /// Adds the notes.
     /// </summary>
@@ -81,13 +85,13 @@
     /// <param name="noteid">The noteid.</param>
     /// <returns></returns>
     /// <exception cref="Exception"></exception>
-    public async Task<bool> DeleteNotes(int noteid)
+    public async Task<bool> DeleteNotes(int noteid,int userid)
     {
       try
       {
         if (noteid != 0)
         {
-          return await _notesRepository.DeleteNotes(noteid);
+          return await _notesRepository.DeleteNotes(noteid,userid);
         }
         else
         {
@@ -181,13 +185,13 @@
     /// <param name="labeid">The labeid.</param>
     /// <returns></returns>
     /// <exception cref="Exception"></exception>
-    public List<NoteResponseModel> GetNoteByLabelId(int labeid)
+    public List<NoteResponseModel> GetNoteByLabelId(int labeid,int userid)
     {
       try
       {
         if (labeid != 0)
         {
-          return _notesRepository.GetNoteByLabelId(labeid);
+          return _notesRepository.GetNoteByLabelId(labeid,userid);
         }
         else
         {
@@ -409,16 +413,17 @@
       }
     }
 
-    public NoteResponseModel Collaborate(MultipleCollaborate collaborate, int noteid)
+    public NoteResponseModel Collaborate(int noteid,MultipleCollaborate collaborate)
     {
       if(noteid!=0 && collaborate!=null)
       {
-        return _notesRepository.Collaborate(collaborate, noteid);
+        return _notesRepository.Collaborate(noteid,collaborate);
       }
       else
       {
         return null;
       }
     }
+
   }
 }

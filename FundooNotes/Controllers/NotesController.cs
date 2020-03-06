@@ -13,7 +13,8 @@ namespace FundooNotes.Controllers
   using FundooCommonLayer.Model;
   using FundooCommonLayer.ModelRequest;
   using Microsoft.AspNetCore.Authorization;
-  using Microsoft.AspNetCore.Http;
+    using Microsoft.AspNetCore.Cors;
+    using Microsoft.AspNetCore.Http;
   using Microsoft.AspNetCore.Mvc;
 
   /// <summary>
@@ -23,6 +24,7 @@ namespace FundooNotes.Controllers
   [Authorize]
   [Route("api/[controller]")]
   [ApiController]
+  [EnableCors("CorsPolicy")]
   public class NotesController : ControllerBase
   {
     private readonly INotesBusiness _notesBusiness;
@@ -30,6 +32,36 @@ namespace FundooNotes.Controllers
     public NotesController(INotesBusiness notesBusiness)
     {
       _notesBusiness = notesBusiness;
+    }
+    [HttpGet]
+    [Route("GetallUser")]
+    public IActionResult GetAllUser(string keyword)
+    {
+      bool status;
+      string message;
+      var user = HttpContext.User;
+      if (user.HasClaim(c => c.Type == "Typetoken"))
+      {
+        if (user.Claims.FirstOrDefault(c => c.Type == "Typetoken").Value == "Login")
+        {
+        
+            int UserId = Convert.ToInt32(user.Claims.FirstOrDefault(c => c.Type == "UserId").Value);
+            var result = _notesBusiness.GetAllUser(keyword);
+            if (result != null)
+            {
+              status = true;
+              message = "List of All User";
+              return Ok(new { status, message, result });
+            }
+            else
+            {
+              status = false;
+              message = "getting List of user has been failed";
+              return NotFound(new { status, message });
+            }
+        }
+      }
+      return BadRequest("used invalid token");
     }
 
     /// <summary>
@@ -215,7 +247,7 @@ namespace FundooNotes.Controllers
     /// <returns></returns>
     /// <exception cref="Exception"></exception>
     [HttpGet]
-    [Route("{labelid}/Notes")]
+    [Route("{labelid}")]
     public IActionResult GetNotesByLabelId(int labelid)
     {
       try
@@ -229,7 +261,7 @@ namespace FundooNotes.Controllers
           if (user.Claims.FirstOrDefault(c => c.Type == "Typetoken").Value == "Login")
           {
             int userId = Convert.ToInt32(user.Claims.FirstOrDefault(c => c.Type == "UserId").Value);
-            noteResponseModels = _notesBusiness.GetNoteByLabelId(labelid);
+            noteResponseModels = _notesBusiness.GetNoteByLabelId(labelid,userId);
             if (noteResponseModels != null)
             {
               status = true;
@@ -271,7 +303,7 @@ namespace FundooNotes.Controllers
           if (user.Claims.FirstOrDefault(c => c.Type == "Typetoken").Value == "Login")
           {
             int UserId = Convert.ToInt32(user.Claims.FirstOrDefault(c => c.Type == "UserId").Value);
-            bool result = await _notesBusiness.DeleteNotes(noteid);
+            bool result = await _notesBusiness.DeleteNotes(noteid,UserId);
             if (result)
             {
               status = true;
@@ -324,8 +356,8 @@ namespace FundooNotes.Controllers
             else
             {
               status = false;
-              message = "Note trash failed";
-              return NotFound(new { status, message });
+              message = "Note Untrash";
+              return Ok(new { status, message });
             }
           }
         }
@@ -379,6 +411,7 @@ namespace FundooNotes.Controllers
         throw new Exception(e.Message);
       }
     }
+   
 
     /// <summary>
     /// Archives the notes.
@@ -410,8 +443,8 @@ namespace FundooNotes.Controllers
             else
             {
               status = false;
-              message = "Note Archive failed";
-              return NotFound(new { status, message });
+              message = "Note UnArchive successfully done";
+              return Ok(new { status, message });
             }
           }
         }
@@ -496,8 +529,8 @@ namespace FundooNotes.Controllers
             else
             {
               status = false;
-              message = "Pinned failed";
-              return NotFound(new { status, message });
+              message = "Notes Unpin";
+              return Ok(new { status, message });
             }
           }
         }
@@ -533,13 +566,13 @@ namespace FundooNotes.Controllers
             if (notesDBs != null)
             {
               status = true;
-              message = "List of All Pinned Notes";
+              message = "List of All Pin Notes";
               return Ok(new { status, message, notesDBs });
             }
             else
             {
               status = false;
-              message = "Unpinned notes";
+              message = "Pin notes are not available";
               return NotFound(new { status, message });
             }
           }
@@ -637,7 +670,7 @@ namespace FundooNotes.Controllers
     /// <returns></returns>
     [HttpPost]
     [Route("{noteid}/Image")]
-    public IActionResult AddImage(int noteid, [FromForm] ImageUpload image)
+    public IActionResult AddImage([FromForm] ImageUpload image, int noteid)
     {
       bool status;
       string message;
@@ -708,8 +741,8 @@ namespace FundooNotes.Controllers
     /// <param name="noteid">The noteid.</param>
     /// <returns></returns>
     [HttpPost]
-    [Route("Collaborate")]
-    public IActionResult Collaborate(MultipleCollaborate collaborate, int noteid)
+    [Route("{noteid}/Collaborate")]
+    public IActionResult Collaborate([FromBody] MultipleCollaborate collaborate, int noteid)
     {
       bool status;
       string message;
@@ -720,24 +753,22 @@ namespace FundooNotes.Controllers
         if (user.Claims.FirstOrDefault(c => c.Type == "Typetoken").Value == "Login")
         {
           int UserId = Convert.ToInt32(user.Claims.FirstOrDefault(c => c.Type == "UserId").Value);
-          notesDB = _notesBusiness.Collaborate(collaborate, noteid);
-          if (notesDB != null)
-          {
-            status = true;
-            message = "collaboration successful done";
-            return Ok(new { status, message, notesDB });
+          notesDB = _notesBusiness.Collaborate(noteid,collaborate);
+            if (notesDB != null)
+            {
+              status = true;
+              message = "collaboration successful done";
+              return Ok(new { status, message, notesDB });
+            }
+            else
+            {
+              status = false;
+              message = "unable to collaborate with user";
+              return NotFound(new { status, message });
+            }
           }
-          else
-          {
-            status = false;
-            message = "collaboration failed";
-            return NotFound(new { status, message });
-          }
-        }
       }
       return BadRequest("used invalid token");
     }
-
   }
-
 }

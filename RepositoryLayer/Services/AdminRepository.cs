@@ -49,7 +49,7 @@ using System.Linq;
       return responseModel;
     }
 
-    public List<GetAllUserResponse> GetAllUser(int pagenumber,int pagesize)
+    public List<GetAllUserResponse> GetAllUser(int pagenumber,int pagesize,string keyword)
     {
       List<GetAllUserResponse> getAllUserResponses = _userContext.Users.Where(Linq => Linq.UserRole == "user").Select(
         linq => new GetAllUserResponse
@@ -65,6 +65,11 @@ using System.Linq;
       {
         get.NumberOfNotes = _userContext.Notes.Where(linq => linq.UserId == get.userid).Count();
       }
+      if (keyword != null)
+      {
+        List<GetAllUserResponse> noteResponseModels = SearchEmail(keyword);
+        return getAllUserResponses;
+      }
       int count = getAllUserResponses.Count();
       int currentpage = pagenumber;
       int sizeofpage = pagesize;
@@ -79,6 +84,31 @@ using System.Linq;
       return result.ToList();
     }
 
+    /// <summary>
+    /// Searches the note.
+    /// </summary>
+    /// <param name="userid">The userid.</param>
+    /// <param name="keyword">The keyword.</param>
+    /// <returns></returns>
+    public List<GetAllUserResponse> SearchEmail(string keyword)
+    {
+      List<GetAllUserResponse> userResponseModels = null;
+      if (keyword != null)
+      {
+        userResponseModels = _userContext.Users.Where(linq => (linq.Email.Contains(keyword))).
+          Select(linq => new GetAllUserResponse
+          {
+            userid=linq.UserId,
+            Email=linq.Email,
+            FirstName=linq.FirstName,
+            LastName=linq.LastName,
+            Type=linq.Type,
+           UserRole=linq.UserRole,         
+          }
+        ).ToList();
+      }
+      return userResponseModels;
+    }
     public ResponseModel Login(Login login)
     {
       login.Password = EncodeDecode.EncodePassword(login.Password);

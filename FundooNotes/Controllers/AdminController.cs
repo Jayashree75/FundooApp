@@ -96,7 +96,7 @@
     }
     [HttpGet]
     [Route("AllUser")]
-    public IActionResult GetAllUser(int pagenumber,int pagesize)
+    public IActionResult GetAllUser(int pagenumber,int pagesize,string keyword)
     {
       bool status;
       string message;
@@ -108,7 +108,7 @@
           if (user.Claims.FirstOrDefault(c => c.Type == "UserRole").Value == "Admin")
           {
             int UserId = Convert.ToInt32(user.Claims.FirstOrDefault(c => c.Type == "UserId").Value);
-            var result = _adminBusiness.GetAllUser(pagenumber,pagesize);
+            var result = _adminBusiness.GetAllUser(pagenumber,pagesize, keyword);
             if (result != null)
             {
               status = true;

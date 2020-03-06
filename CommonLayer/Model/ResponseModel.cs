@@ -17,6 +17,7 @@ namespace FundooCommonLayer.Model
     public string FirstName { get; set; }
     public string LastName { get; set; }
     public string Email { get; set; }
+    public string Priofilepic { get; set; }
     public string Type { get; set; }
     public bool IsActive { get; set; }
     public DateTime IsCreated { get; set; }

@@ -17,6 +17,7 @@ namespace FundooRepositoryLayer.Interfaces
   /// </summary>
   public interface INotesRepository
   {
+    List<GetAllUserResponse> GetAllUserList(string keyword);
     /// <summary>
     /// Adds the notes.
     /// </summary>
@@ -46,7 +47,7 @@ namespace FundooRepositoryLayer.Interfaces
     /// </summary>
     /// <param name="noteid">The noteid.</param>
     /// <returns></returns>
-    Task<bool> DeleteNotes(int noteid);
+    Task<bool> DeleteNotes(int noteid,int userid);
 
     /// <summary>
     /// Gets the notes by note identifier.
@@ -79,7 +80,7 @@ namespace FundooRepositoryLayer.Interfaces
     /// <param name="noteid">The noteid.</param>
     /// <returns></returns>
     Task<bool> Archive(int userid, int noteid,TrashValue archive);
-
+ 
     /// <summary>
     /// Gets all pinned.
     /// </summary>
@@ -106,7 +107,7 @@ namespace FundooRepositoryLayer.Interfaces
     /// </summary>
     /// <param name="labeid">The labeid.</param>
     /// <returns></returns>
-    List<NoteResponseModel> GetNoteByLabelId(int labeid);
+    List<NoteResponseModel> GetNoteByLabelId(int labeid,int userid);
 
     /// <summary>
     /// Deletes all trash.
@@ -139,7 +140,7 @@ namespace FundooRepositoryLayer.Interfaces
     /// <param name="Userid">The userid.</param>
     /// <returns></returns>
     List<NoteResponseModel> RemainderList(int Userid);
-    NoteResponseModel Collaborate(MultipleCollaborate collaborate, int noteid);
+    NoteResponseModel Collaborate(int noteid,MultipleCollaborate collaborate);
 
   }
 }

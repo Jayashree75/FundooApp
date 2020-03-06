@@ -17,6 +17,7 @@ namespace FundooBusinessLayer.Interfaces
   /// </summary>
   public interface INotesBusiness
   {
+    List<GetAllUserResponse> GetAllUser(string keyword);
     /// <summary>
     /// Adds the notes.
     /// </summary>
@@ -46,7 +47,7 @@ namespace FundooBusinessLayer.Interfaces
     /// </summary>
     /// <param name="noteid">The noteid.</param>
     /// <returns></returns>
-    Task<bool> DeleteNotes(int noteid);
+    Task<bool> DeleteNotes(int noteid,int usrid);
 
     /// <summary>
     /// Gets the notes by note identifier.
@@ -106,7 +107,7 @@ namespace FundooBusinessLayer.Interfaces
     /// </summary>
     /// <param name="labeid">The labeid.</param>
     /// <returns></returns>
-    List<NoteResponseModel> GetNoteByLabelId(int labeid);
+    List<NoteResponseModel> GetNoteByLabelId(int labeid,int userid);
 
     /// <summary>
     /// Deletes all trash.
@@ -138,6 +139,6 @@ namespace FundooBusinessLayer.Interfaces
     /// <param name="Userid">The userid.</param>
     /// <returns></returns>
     List<NoteResponseModel> RemainderList(int Userid);
-    NoteResponseModel Collaborate(MultipleCollaborate collaborate, int noteid);
+    NoteResponseModel Collaborate(int noteid,MultipleCollaborate collaborate);
   }
 }

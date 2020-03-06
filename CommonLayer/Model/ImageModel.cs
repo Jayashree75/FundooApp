@@ -13,7 +13,7 @@ namespace FundooCommonLayer.Model
     {
       var cloudinary = new Cloudinary(new CloudinaryDotNet.Account(
             "dcppmimth",
-             "564861446881366",
+            "564861446881366",
             "SGoAPaosICxm05kxNy_haYbTPiA"));
       var file = url.FileName;
       var stream = url.OpenReadStream();

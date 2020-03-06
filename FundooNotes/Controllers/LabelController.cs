@@ -13,7 +13,8 @@ namespace FundooNotes.Controllers
   using FundooCommonLayer.Model;
   using FundooCommonLayer.ModelRequest;
   using Microsoft.AspNetCore.Authorization;
-  using Microsoft.AspNetCore.Http;
+    using Microsoft.AspNetCore.Cors;
+    using Microsoft.AspNetCore.Http;
   using Microsoft.AspNetCore.Mvc;
 
   /// <summary>
@@ -23,6 +24,7 @@ namespace FundooNotes.Controllers
   [Authorize]
   [Route("api/[controller]")]
   [ApiController]
+  [EnableCors("CorsPolicy")]
   public class LabelController : ControllerBase
   {
     private readonly ILabelBusiness _labelBusiness;
@@ -167,7 +169,7 @@ namespace FundooNotes.Controllers
     /// <exception cref="Exception"></exception>
     [HttpGet]
     public IActionResult GetAllLabel()
-    {
+     {
       try
       {
         bool status;
