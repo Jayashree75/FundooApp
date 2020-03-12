@@ -283,7 +283,69 @@ namespace FundooNotes.Controllers
         throw new Exception(e.Message);
       }
     }
+    [HttpPost("Note/{noteId}/Label/{labelId}")]
+    public async Task<IActionResult> AddLabel(int noteId, int labelId)
+    {
+      try
+      {
+        var user = HttpContext.User;
+        if (user.HasClaim(c => c.Type == "Typetoken"))
+        {
+          if (user.Claims.FirstOrDefault(c => c.Type == "Typetoken").Value == "Login")
+          {
+            int UserId = Convert.ToInt32(user.Claims.FirstOrDefault(c => c.Type == "UserId").Value);
+            var status = await this._notesBusiness.AddLabel(noteId, labelId, UserId);
+            if (status)
+            {
+              var message = "Label added to given note";
+              return this.Ok(new { status, message });
+            }
+            else
+            {
+              var message = "invalid noteid and labelid";
+              return this.BadRequest(new { status, message });
+            }
+          }
+        }
+        return BadRequest("used invalid token");
+      }
 
+      catch (Exception e)
+      {
+        throw new Exception(e.Message);
+      }
+    }
+
+    /// <summary>
+    /// API to remove label from note
+    /// </summary>
+    /// <param name="noteId">id of note</param>
+    /// <param name="labelId">id of label to be removed from note</param>
+    /// <returns>returns message</returns>
+    [HttpDelete("Note/{noteId}/Label/{labelId}")]
+    [EnableCors("CorsPolicy")]
+    public async Task<IActionResult> RemoveLabel(int noteId, int labelId)
+    {
+      try
+      {
+        int userId = Convert.ToInt32(User.FindFirst("Id")?.Value);
+        var status = await this._notesBusiness.RemoveLabel(noteId, labelId, userId);
+        if (status)
+        {
+          var message = "Label removed from note";
+          return this.Ok(new { status, message });
+        }
+        else
+        {
+          var message = "invalid noteid and labelid";
+          return this.BadRequest(new { status, message });
+        }
+      }
+      catch (Exception e)
+      {
+        throw new Exception(e.Message);
+      }
+    }
     /// <summary>
     /// Deletes the notes.
     /// </summary>
@@ -767,6 +829,34 @@ namespace FundooNotes.Controllers
               return NotFound(new { status, message });
             }
           }
+      }
+      return BadRequest("used invalid token");
+    }
+    [HttpDelete]
+    [Route("{noteid}/CollaborateRemove/{userid}")]
+    public IActionResult CollaborateRemove(int noteid, int userid)
+    {
+      bool status;
+      string message;
+      var user = HttpContext.User;
+      if (user.HasClaim(c => c.Type == "Typetoken"))
+      {
+        if (user.Claims.FirstOrDefault(c => c.Type == "Typetoken").Value == "Login")
+        {
+          var notesDB = _notesBusiness.CollaborateRemove(noteid, userid);
+          if (notesDB!=null)
+          {
+            status = true;
+            message = "collaboration remove successful done";
+            return Ok(new { status, message});
+          }
+          else
+          {
+            status = false;
+            message = "unable to remove collaborate with user";
+            return NotFound(new { status, message });
+          }
+        }
       }
       return BadRequest("used invalid token");
     }

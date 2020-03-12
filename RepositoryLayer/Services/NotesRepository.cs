@@ -42,16 +42,16 @@ namespace FundooRepositoryLayer.Services
       {
         get.NumberOfNotes = _userContext.Notes.Where(linq => linq.UserId == get.userid).Count();
       }
-      if(getAllUserResponses!=null)
+      if (getAllUserResponses != null)
       {
         return getAllUserResponses;
       }
-     else
+      else
       {
         return null;
       }
     }
- 
+
     /// <summary>
     /// This is the method for add the notes.
     /// </summary>
@@ -68,7 +68,7 @@ namespace FundooRepositoryLayer.Services
           Title = requestedNotes.Title,
           Description = requestedNotes.Description,
           Reminder = requestedNotes.Reminder,
-         // Image = string.IsNullOrWhiteSpace(requestedNotes.Image.ToString()) ? "null" : ImageModel.ImageAdd(requestedNotes.Image),
+          // Image = string.IsNullOrWhiteSpace(requestedNotes.Image.ToString()) ? "null" : ImageModel.ImageAdd(requestedNotes.Image),
           Color = string.IsNullOrWhiteSpace(requestedNotes.Color) ? "null" : requestedNotes.Color,
           IsCreated = DateTime.Now,
           IsModified = DateTime.Now,
@@ -164,11 +164,11 @@ namespace FundooRepositoryLayer.Services
     /// </summary>
     /// <param name="noteid"></param>
     /// <returns></returns>
-    public async Task<bool> DeleteNotes(int noteid,int userid)
+    public async Task<bool> DeleteNotes(int noteid, int userid)
     {
       try
       {
-        NotesDB notes = _userContext.Notes.FirstOrDefault(note => note.NoteID == noteid && note.UserId==userid);
+        NotesDB notes = _userContext.Notes.FirstOrDefault(note => note.NoteID == noteid && note.UserId == userid);
         if (notes != null)
         {
           List<Noteslabel> noteslabels = _userContext.Noteslabels.Where(linq => linq.NoteID == noteid).ToList();
@@ -205,7 +205,7 @@ namespace FundooRepositoryLayer.Services
     /// <param name="userid"></param>
     /// <returns></returns>
     public List<NoteResponseModel> GetNotes(int userid, string keyword)
-     {
+    {
       try
       {
         List<NoteResponseModel> notesDBs1 = _userContext.collaborates.Where(linq => linq.UserId == userid).Join(_userContext.Notes,
@@ -249,7 +249,7 @@ namespace FundooRepositoryLayer.Services
                                                  Title = note.Title,
                                                  Description = note.Description,
                                                  Reminder = note.Reminder,
-                                                 Color=note.Color,
+                                                 Color = note.Color,
                                                  Image = note.Image,
                                                  IsArchive = note.IsArchive,
                                                  IsPin = note.IsPin,
@@ -309,6 +309,90 @@ namespace FundooRepositoryLayer.Services
           }
 
         }
+      }
+      catch (Exception e)
+      {
+        throw new Exception(e.Message);
+      }
+    }
+    public async Task<bool> AddLabel(int noteId, int labelId, int userId)
+    {
+      try
+      {
+        var note = this._userContext.Notes.Where(g => g.NoteID == noteId).FirstOrDefault();
+        var label = this._userContext.label.Where(g => g.LabelID == labelId).FirstOrDefault();
+
+        if (note != null && label != null)
+        {
+          if (note.UserId == userId && label.UserId == userId)
+          {
+            var noteLabel = this._userContext.Noteslabels.Where(g => g.NoteID == note.NoteID && g.LabelID == label.LabelID).FirstOrDefault();
+
+            if (noteLabel == null)
+            {
+              var model = new Noteslabel()
+              {
+                NoteID = noteId,
+                LabelID = labelId,
+              };
+              this._userContext.Noteslabels.Add(model);
+              await this._userContext.SaveChangesAsync();
+
+              ////**** Change the modified date of note
+              note.Reminder = DateTime.Now;
+              await this._userContext.SaveChangesAsync();
+              ////****
+
+              return true;
+            }
+
+            return true;
+          }
+
+          return false;
+        }
+
+        return false;
+      }
+      catch (Exception e)
+      {
+        throw new Exception(e.Message);
+      }
+    }
+
+    /// <summary>
+    /// Method to remove label from note
+    /// </summary>
+    /// <param name="noteId">id of note</param>
+    /// <param name="labelId">id of label to be removed from note</param>
+    /// <param name="userId">id of user</param>
+    /// <returns>returns message</returns>
+    public async Task<bool> RemoveLabel(int noteId, int labelId, int userId)
+    {
+      try
+      {
+        var noteLabel = this._userContext.Noteslabels.Where(g => g.NoteID == noteId && g.LabelID == labelId).FirstOrDefault();
+
+        if (noteLabel != null)
+        {
+          if (noteLabel.NoteID == noteId)
+          {
+            this._userContext.Noteslabels.Remove(noteLabel);
+            await this._userContext.SaveChangesAsync();
+
+            ////**** Change the modified date of note
+            var note = this._userContext.Notes.Where(g => g.NoteID == noteId).FirstOrDefault();
+            note.Reminder = DateTime.Now;
+            await this._userContext.SaveChangesAsync();
+            ////****
+
+            return true;
+          }
+
+          return false;
+        }
+
+        return false;
       }
       catch (Exception e)
       {
@@ -433,15 +517,15 @@ namespace FundooRepositoryLayer.Services
             CollaborateResponse = collaborateResponses
           }).FirstOrDefault();
         NoteResponseModel note1 = null;
-        foreach(NoteResponseModel note2 in notesDBs1)
+        foreach (NoteResponseModel note2 in notesDBs1)
         {
-          if(note2.NoteID==noteid)
+          if (note2.NoteID == noteid)
           {
             note1 = note2;
           }
         }
-        if(note1!=null)
-          {
+        if (note1 != null)
+        {
           return note1;
 
         }
@@ -555,7 +639,7 @@ namespace FundooRepositoryLayer.Services
                Title = a.Title,
                Description = a.Description,
                Reminder = a.Reminder,
-               Color=a.Color,
+               Color = a.Color,
                Image = a.Image,
                IsArchive = a.IsArchive,
                IsPin = a.IsPin,
@@ -754,7 +838,7 @@ namespace FundooRepositoryLayer.Services
         throw new Exception(e.Message);
       }
     }
-   
+
     /// <summary>
     /// this is the method for to get all archive list.
     /// </summary>
@@ -828,7 +912,7 @@ namespace FundooRepositoryLayer.Services
     /// </summary>
     /// <param name="labeid"></param>
     /// <returns></returns>
-    public List<NoteResponseModel> GetNoteByLabelId(int labeid,int userid)
+    public List<NoteResponseModel> GetNoteByLabelId(int labeid, int userid)
     {
       try
       {
@@ -1057,7 +1141,7 @@ namespace FundooRepositoryLayer.Services
     /// </summary>
     /// <param name="userid">The userid.</param>
     /// <returns></returns>
-    public NoteResponseModel Collaborate(int noteid,MultipleCollaborate collaborate)
+    public NoteResponseModel Collaborate(int noteid, MultipleCollaborate collaborate)
     {
       var notesdb = _userContext.Notes.FirstOrDefault(linq => linq.NoteID == noteid);
       if (notesdb != null && collaborate.Collaborates.Count != 0)
@@ -1065,19 +1149,22 @@ namespace FundooRepositoryLayer.Services
         foreach (CollaborateRequest request in collaborate.Collaborates)
         {
           UserDetails user = _userContext.Users.FirstOrDefault(linq => linq.UserId == request.UserId);
-
-          if (request.UserId != 0 && user != null)
+          var check = _userContext.collaborates.FirstOrDefault(linq => linq.UserId == request.UserId && linq.NoteID == noteid);
+          if (check==null)
           {
-            if (request.UserId == user.UserId)
+            if (request.UserId != 0 && user != null)
             {
-              var data = new CollaborateDb()
+              if (request.UserId == user.UserId)
               {
-                NoteID = notesdb.NoteID,
-                UserId = user.UserId
-              };
-              _userContext.collaborates.Add(data);
-              _userContext.SaveChanges();
+                var data = new CollaborateDb()
+                {
+                  NoteID = notesdb.NoteID,
+                  UserId = user.UserId
+                };
+                _userContext.collaborates.Add(data);
+                _userContext.SaveChanges();
 
+              }
             }
           }
           else
@@ -1118,5 +1205,34 @@ namespace FundooRepositoryLayer.Services
       };
       return noteResponse;
     }
+
+    public async Task<bool> RemoveCollaborate(int noteId, int userId)
+    {
+      try
+      {
+        var notecollaborate = this._userContext.collaborates.Where(g => g.NoteID == noteId && g.UserId == userId).FirstOrDefault();
+
+        if (notecollaborate != null)
+        {
+          if (notecollaborate.NoteID == noteId)
+          {
+            this._userContext.collaborates.Remove(notecollaborate);
+            await this._userContext.SaveChangesAsync();
+            return true;
+          }
+
+          return false;
+        }
+
+        return false;
+      }
+      catch (Exception e)
+      {
+        throw new Exception(e.Message);
+      }
+    }
+
+
+
   }
 }

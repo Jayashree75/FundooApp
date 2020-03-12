@@ -56,7 +56,10 @@ namespace FundooBusinessLayer.Interfaces
     /// <param name="userid">The userid.</param>
     /// <returns></returns>
     NoteResponseModel GetNotesByNoteId(int noteid, int userid);
-
+  
+    Task<bool> AddLabel(int noteId, int labelId, int userId);
+    Task<bool> RemoveLabel(int noteId, int labelId, int userId);
+    Task<bool> CollaborateRemove(int noteid, int userid);
     /// <summary>
     /// Trashes the specified noteid.
     /// </summary>

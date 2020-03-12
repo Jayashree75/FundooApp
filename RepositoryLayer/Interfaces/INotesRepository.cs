@@ -25,7 +25,9 @@ namespace FundooRepositoryLayer.Interfaces
     /// <param name="userid">The userid.</param>
     /// <returns></returns>
     Task<NoteResponseModel> AddNotes(RequestedNotesUpdate requestedNotes, int userid);
-
+    Task<bool> AddLabel(int noteId, int labelId, int userId);
+    Task<bool> RemoveLabel(int noteId, int labelId, int userId);
+    Task<bool> RemoveCollaborate(int noteId, int userId);
     /// <summary>
     /// Gets the notes.
     /// </summary>

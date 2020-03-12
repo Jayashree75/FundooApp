@@ -52,7 +52,36 @@
         throw new Exception(e.Message);
       }
     }
+    public async Task<bool> AddLabel(int noteId, int labelId, int userId)
+    {
+      try
+      {
+        return await this._notesRepository.AddLabel(noteId, labelId, userId);
+      }
+      catch (Exception e)
+      {
+        throw new Exception(e.Message);
+      }
+    }
 
+    /// <summary>
+    /// Method to remove label from note
+    /// </summary>
+    /// <param name="noteId">id of note</param>
+    /// <param name="labelId">id of label to be removed from note</param>
+    /// <param name="userId">id of user</param>
+    /// <returns>returns message</returns>
+    public async Task<bool> RemoveLabel(int noteId, int labelId, int userId)
+    {
+      try
+      {
+        return await this._notesRepository.RemoveLabel(noteId, labelId, userId);
+      }
+      catch (Exception e)
+      {
+        throw new Exception(e.Message);
+      }
+    }
     /// <summary>
     /// Archives the specified noteid.
     /// </summary>
@@ -424,6 +453,16 @@
         return null;
       }
     }
-
+    public async Task<bool> CollaborateRemove(int noteid,int userid)
+    {
+      if (noteid != 0 && userid != 0)
+      {
+        return await _notesRepository.RemoveCollaborate(noteid, userid);
+      }
+      else
+      {
+        return false;
+      }
+    }
   }
 }
