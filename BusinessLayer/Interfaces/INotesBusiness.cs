@@ -57,8 +57,8 @@ namespace FundooBusinessLayer.Interfaces
     /// <returns></returns>
     NoteResponseModel GetNotesByNoteId(int noteid, int userid);
   
-    Task<bool> AddLabel(int noteId, int labelId, int userId);
-    Task<bool> RemoveLabel(int noteId, int labelId, int userId);
+    Task<List<LabelResponseModel>> AddLabel(int noteId, int labelId, int userId);
+    Task<List<LabelResponseModel>> RemoveLabel(int noteId, int labelId,int userid);
     Task<bool> CollaborateRemove(int noteid, int userid);
     /// <summary>
     /// Trashes the specified noteid.

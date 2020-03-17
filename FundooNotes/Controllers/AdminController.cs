@@ -8,7 +8,8 @@
   using FundooBusinessLayer.Interfaces;
   using FundooCommonLayer.Model;
   using FundooCommonLayer.ModelRequest;
-  using Microsoft.AspNetCore.Http;
+    using Microsoft.AspNetCore.Cors;
+    using Microsoft.AspNetCore.Http;
   using Microsoft.AspNetCore.Mvc;
   using Microsoft.Extensions.Configuration;
   using Microsoft.IdentityModel.Tokens;
@@ -16,6 +17,8 @@
 
   [Route("api/[controller]")]
   [ApiController]
+
+  [EnableCors("CorsPolicy")]
   public class AdminController : ControllerBase
   {
     private readonly IAdminBusiness _adminBusiness;
@@ -96,7 +99,7 @@
     }
     [HttpGet]
     [Route("AllUser")]
-    public IActionResult GetAllUser(int pagenumber,int pagesize,string keyword)
+    public IActionResult GetAllUser(string keyword)
     {
       bool status;
       string message;
@@ -108,7 +111,7 @@
           if (user.Claims.FirstOrDefault(c => c.Type == "UserRole").Value == "Admin")
           {
             int UserId = Convert.ToInt32(user.Claims.FirstOrDefault(c => c.Type == "UserId").Value);
-            var result = _adminBusiness.GetAllUser(pagenumber,pagesize, keyword);
+            var result = _adminBusiness.GetAllUser(keyword);
             if (result != null)
             {
               status = true;

@@ -26,9 +26,9 @@ namespace FundooBusinessLayer.Services
         return null;
       }
     }
-    public List<GetAllUserResponse> GetAllUser(int pagenumber,int pagesize,string keyword)
+    public List<GetAllUserResponse> GetAllUser(string keyword)
     {    
-        return _adminRepository.GetAllUser(pagenumber,pagesize, keyword);
+        return _adminRepository.GetAllUser(keyword);
     }
 
     public ResponseModel Login(Login login)

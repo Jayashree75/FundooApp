@@ -1,13 +1,13 @@
 ﻿namespace FundooRepositoryLayer.Services
 {
-using CommonLayer.Model;
-using FundooCommonLayer.Model;
-using FundooCommonLayer.ModelRequest;
-using FundooRepositoryLayer.Interfaces;
-using FundooRepositoryLayer.ModelDB;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+  using CommonLayer.Model;
+  using FundooCommonLayer.Model;
+  using FundooCommonLayer.ModelRequest;
+  using FundooRepositoryLayer.Interfaces;
+  using FundooRepositoryLayer.ModelDB;
+  using System;
+  using System.Collections.Generic;
+  using System.Linq;
 
   public class AdminRepository : IAdminRepository
   {
@@ -49,39 +49,48 @@ using System.Linq;
       return responseModel;
     }
 
-    public List<GetAllUserResponse> GetAllUser(int pagenumber,int pagesize,string keyword)
+    public List<GetAllUserResponse> GetAllUser(string keyword)
     {
-      List<GetAllUserResponse> getAllUserResponses = _userContext.Users.Where(Linq => Linq.UserRole == "user").Select(
-        linq => new GetAllUserResponse
-        {
-          userid = linq.UserId,
-          FirstName = linq.FirstName,
-          LastName = linq.LastName,
-          Email = linq.Email,
-          Type = linq.Type,
-          UserRole = linq.UserRole
-        }).ToList();
-      foreach (var get in getAllUserResponses)
-      {
-        get.NumberOfNotes = _userContext.Notes.Where(linq => linq.UserId == get.userid).Count();
-      }
+      List<GetAllUserResponse> getAllUserResponses = null;
       if (keyword != null)
       {
-        List<GetAllUserResponse> noteResponseModels = SearchEmail(keyword);
+       getAllUserResponses = _userContext.Users.Where(Linq => Linq.UserRole == "user" && Linq.Email.Contains(keyword)).Select(
+          linq => new GetAllUserResponse
+          {
+            userid = linq.UserId,
+            FirstName = linq.FirstName,
+            LastName = linq.LastName,
+            Email = linq.Email,
+            Type = linq.Type,
+            UserRole = linq.UserRole
+          }).ToList();
+        foreach (var get in getAllUserResponses)
+        {
+          get.NumberOfNotes = _userContext.Notes.Where(linq => linq.UserId == get.userid).Count();
+        }
+        if (getAllUserResponses != null)
+        {
+          return getAllUserResponses;
+        }
+        else
+        {
+          return null;
+        }
+      }
+      else
+      {
+        getAllUserResponses = _userContext.Users.Where(Linq => Linq.UserRole == "user").Select(
+          linq => new GetAllUserResponse
+          {
+            userid = linq.UserId,
+            FirstName = linq.FirstName,
+            LastName = linq.LastName,
+            Email = linq.Email,
+            Type = linq.Type,
+            UserRole = linq.UserRole
+          }).ToList();
         return getAllUserResponses;
       }
-      int count = getAllUserResponses.Count();
-      int currentpage = pagenumber;
-      int sizeofpage = pagesize;
-      int totalpages = (int)Math.Ceiling(count / (double)sizeofpage);
-      if(currentpage==0)
-      {
-        currentpage++;
-        var items = getAllUserResponses.Skip(currentpage - 1 * sizeofpage).Take(pagesize).ToList();
-      }
-      int numberofObjectperpage = pagesize;
-      var result = getAllUserResponses.Skip(numberofObjectperpage * pagenumber).Take(numberofObjectperpage);
-      return result.ToList();
     }
 
     /// <summary>
@@ -125,8 +134,16 @@ using System.Linq;
           IsModified = data.IsModified,
           UserRole = data.UserRole
         };
-        return admindata;
+        if(admindata.UserRole=="Admin")
+        {
+          return admindata;
+        }
+        else
+        {
+          return null;
+        }
       }
+
       else
       {
         return null;

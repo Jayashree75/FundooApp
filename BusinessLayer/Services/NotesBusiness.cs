@@ -52,7 +52,7 @@
         throw new Exception(e.Message);
       }
     }
-    public async Task<bool> AddLabel(int noteId, int labelId, int userId)
+    public async Task<List<LabelResponseModel>> AddLabel(int noteId, int labelId, int userId)
     {
       try
       {
@@ -71,7 +71,7 @@
     /// <param name="labelId">id of label to be removed from note</param>
     /// <param name="userId">id of user</param>
     /// <returns>returns message</returns>
-    public async Task<bool> RemoveLabel(int noteId, int labelId, int userId)
+    public async Task<List<LabelResponseModel>> RemoveLabel(int noteId, int labelId, int userId)
     {
       try
       {

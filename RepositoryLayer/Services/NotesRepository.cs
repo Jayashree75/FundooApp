@@ -315,19 +315,18 @@ namespace FundooRepositoryLayer.Services
         throw new Exception(e.Message);
       }
     }
-    public async Task<bool> AddLabel(int noteId, int labelId, int userId)
+    public async Task<List<LabelResponseModel>> AddLabel(int noteId, int labelId, int userId)
     {
       try
       {
         var note = this._userContext.Notes.Where(g => g.NoteID == noteId).FirstOrDefault();
         var label = this._userContext.label.Where(g => g.LabelID == labelId).FirstOrDefault();
+        var noteLabel = this._userContext.Noteslabels.Where(g => g.NoteID == note.NoteID && g.LabelID == label.LabelID).FirstOrDefault();
 
         if (note != null && label != null)
         {
           if (note.UserId == userId && label.UserId == userId)
           {
-            var noteLabel = this._userContext.Noteslabels.Where(g => g.NoteID == note.NoteID && g.LabelID == label.LabelID).FirstOrDefault();
-
             if (noteLabel == null)
             {
               var model = new Noteslabel()
@@ -337,22 +336,27 @@ namespace FundooRepositoryLayer.Services
               };
               this._userContext.Noteslabels.Add(model);
               await this._userContext.SaveChangesAsync();
-
-              ////**** Change the modified date of note
-              note.Reminder = DateTime.Now;
-              await this._userContext.SaveChangesAsync();
-              ////****
-
-              return true;
+              
             }
-
-            return true;
+         
+           
           }
-
-          return false;
+         
         }
+        List<LabelResponseModel> labelResponseModels = _userContext.Noteslabels.
+                                                    Where(notes => notes.NoteID == note.NoteID).
+                                                    Join(_userContext.label,
+                                                    noteslabel => noteslabel.LabelID,
+                                                    labelnote => labelnote.LabelID,
+                                                    (noteslabel, labelnote) => new LabelResponseModel
+                                                    {
+                                                      LabelID = noteslabel.LabelID,
+                                                      LabelName = label.LabelName,
+                                                      IsCreated = label.IsCreated,
+                                                      IsModified = label.IsModified
+                                                    }).ToList();
 
-        return false;
+        return labelResponseModels;
       }
       catch (Exception e)
       {
@@ -367,7 +371,7 @@ namespace FundooRepositoryLayer.Services
     /// <param name="labelId">id of label to be removed from note</param>
     /// <param name="userId">id of user</param>
     /// <returns>returns message</returns>
-    public async Task<bool> RemoveLabel(int noteId, int labelId, int userId)
+    public async Task<List<LabelResponseModel>> RemoveLabel(int noteId, int labelId, int userId)
     {
       try
       {
@@ -379,20 +383,27 @@ namespace FundooRepositoryLayer.Services
           {
             this._userContext.Noteslabels.Remove(noteLabel);
             await this._userContext.SaveChangesAsync();
+            List<LabelResponseModel> labelResponseModels = _userContext.Noteslabels.
+                                                           Where(notes => notes.NoteID == noteLabel.NoteID).
+                                                           Join(_userContext.label,
+                                                           noteslabel => noteslabel.LabelID,
+                                                           label => label.LabelID,
+                                                           (noteslabel, label) => new LabelResponseModel
+                                                           {
+                                                             LabelID = noteslabel.LabelID,
+                                                             LabelName = label.LabelName,
+                                                             IsCreated = label.IsCreated,
+                                                             IsModified = label.IsModified
+                                                           }).ToList();
 
-            ////**** Change the modified date of note
-            var note = this._userContext.Notes.Where(g => g.NoteID == noteId).FirstOrDefault();
-            note.Reminder = DateTime.Now;
-            await this._userContext.SaveChangesAsync();
-            ////****
+            return labelResponseModels;
 
-            return true;
           }
 
-          return false;
+
         }
 
-        return false;
+        return null;
       }
       catch (Exception e)
       {

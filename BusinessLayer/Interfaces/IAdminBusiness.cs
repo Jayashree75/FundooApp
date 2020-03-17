@@ -11,6 +11,6 @@ namespace FundooBusinessLayer.Interfaces
      ResponseModel AdminRegistration(Registratin registration);
      ResponseModel Login(Login login);
     Dictionary<string, int> Statistics(int userid);
-    List<GetAllUserResponse> GetAllUser(int pagenumber,int pagesize,string keyword);
+    List<GetAllUserResponse> GetAllUser(string keyword);
   }
 }

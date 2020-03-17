@@ -295,7 +295,7 @@ namespace FundooNotes.Controllers
           {
             int UserId = Convert.ToInt32(user.Claims.FirstOrDefault(c => c.Type == "UserId").Value);
             var status = await this._notesBusiness.AddLabel(noteId, labelId, UserId);
-            if (status)
+            if (status!=null)
             {
               var message = "Label added to given note";
               return this.Ok(new { status, message });
@@ -330,7 +330,7 @@ namespace FundooNotes.Controllers
       {
         int userId = Convert.ToInt32(User.FindFirst("Id")?.Value);
         var status = await this._notesBusiness.RemoveLabel(noteId, labelId, userId);
-        if (status)
+        if (status!=null)
         {
           var message = "Label removed from note";
           return this.Ok(new { status, message });
